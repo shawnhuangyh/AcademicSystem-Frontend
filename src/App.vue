@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from "vue";
 import { setToken } from "@/utils/token";
-import SelectCourse from "@/components/admin/SelectClass.vue";
+import SelectCourse from "@/components/admin/Class.vue";
 import StudentClass from "@/components/student/StudentClass.vue";
 import Department from "@/components/admin/Department.vue";
 
@@ -13,8 +13,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <department></department>
-  <!--  <select-course />-->
+  <!--  <department></department>-->
+  <select-course />
   <!--  <student-class />-->
 </template>
 

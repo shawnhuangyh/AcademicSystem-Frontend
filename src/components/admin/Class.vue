@@ -1,31 +1,29 @@
 <template>
   <div class="form-box">
-    <el-form label-position="left" label-width="80px" :model="search_form">
-      <el-row :gutter="20" justify="center">
-        <el-col :span="12">
-          <el-form-item label="课程号">
-            <el-input v-model="search_form.course_id" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="课程名称">
-            <el-input v-model="search_form.course_name" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20" justify="center">
-        <el-col :span="12">
-          <el-form-item label="班级号">
-            <el-input v-model="search_form.class_id" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="教师姓名">
-            <el-input v-model="search_form.teacher_name" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </el-form>
+    <el-row :gutter="20" justify="center">
+      <el-col :span="12">
+        <el-form-item label="课程号">
+          <el-input v-model="course_id" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="课程名称">
+          <el-input v-model="course_name" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20" justify="center">
+      <el-col :span="12">
+        <el-form-item label="班级号">
+          <el-input v-model="class_id" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="教师姓名">
+          <el-input v-model="teacher_name" />
+        </el-form-item>
+      </el-col>
+    </el-row>
   </div>
 
   <div class="table-box">
@@ -59,16 +57,14 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { classList } from "@/api";
 
 // search
-const search_form = ref({
-  course_id: "",
-  course_name: "",
-  class_id: "",
-  teacher_name: "",
-});
+const course_id = ref("");
+const course_name = ref("");
+const class_id = ref("");
+const teacher_name = ref("");
 
 // table
 const classes = ref();
@@ -77,14 +73,17 @@ const nowSelectedPage = ref(1);
 const totalPage = ref(0);
 
 const getClassList = async (pageNum) => {
-  const result = await classList(pageNum);
-  console.log(result);
-
+  const result = await classList(
+    pageNum,
+    course_id.value,
+    course_name.value,
+    class_id.value,
+    teacher_name.value
+  );
   totalPage.value = result.data.count;
   if (result.status === 200) {
     classes.value = result.data.results;
   }
-  console.log(classes.value);
 };
 const pageChange = (param) => {
   nowSelectedPage.value = param;
@@ -93,6 +92,22 @@ const pageChange = (param) => {
 onMounted(() => {
   getClassList(nowSelectedPage.value);
 });
+
+watch(course_id, () => {
+  getClassList(1);
+});
+
+watch(course_name, () => {
+  getClassList(1);
+});
+
+watch(class_id, () => {
+  getClassList(1);
+});
+
+watch(teacher_name, () => {
+  getClassList(1);
+});
 </script>
 
 <style scoped>
@@ -100,6 +115,7 @@ onMounted(() => {
   width: 80%;
   margin: 0 auto;
 }
+
 .table-box {
   width: 100%;
   margin: 0 auto;

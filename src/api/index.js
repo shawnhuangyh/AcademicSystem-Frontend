@@ -18,12 +18,22 @@ export const courseList = () =>
     method: "get",
   });
 
-export const classList = (pageNum) =>
+export const classList = (
+  pageNum,
+  course_id,
+  course_name,
+  class_id,
+  teacher_name
+) =>
   requests({
     url: `/class/`,
     method: "get",
     params: {
       page: pageNum,
+      course__course_id: course_id,
+      course__name: course_name,
+      class_no: class_id,
+      teacher__name: teacher_name,
     },
   });
 export const courseSelectionList = () =>
