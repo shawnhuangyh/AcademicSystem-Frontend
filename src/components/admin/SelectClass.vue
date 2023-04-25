@@ -104,11 +104,4 @@ onMounted(() => {
   width: 100%;
   margin: 0 auto;
 }
-.pagination-box {
-  width: 100%;
-  margin: 5px auto;
-}
-.el-pagination {
-  justify-content: center;
-}
 </style>

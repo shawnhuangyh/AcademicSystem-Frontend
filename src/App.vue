@@ -1,8 +1,9 @@
 <script setup>
 import { onMounted } from "vue";
 import { setToken } from "@/utils/token";
-import SelectCourse from "@/components/SelectClass.vue";
-import StudentClass from "@/components/StudentClass.vue";
+import SelectCourse from "@/components/admin/SelectClass.vue";
+import StudentClass from "@/components/student/StudentClass.vue";
+import Department from "@/components/admin/Department.vue";
 
 onMounted(() => {
   setToken(
@@ -12,8 +13,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <select-course />
-  <student-class />
+  <department></department>
+  <!--  <select-course />-->
+  <!--  <student-class />-->
 </template>
 
-<style scoped></style>
+<style>
+.pagination-box {
+  width: 100%;
+  margin: 5px auto;
+}
+.el-pagination {
+  justify-content: center;
+}
+</style>
