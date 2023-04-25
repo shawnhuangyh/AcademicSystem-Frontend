@@ -10,10 +10,8 @@ const requests = axios.create({
 
 requests.interceptors.request.use(
   (config) => {
-    //配置对象,在发送请求之前做些什么
-    //配置用户登录信息
     if (getToken()) {
-      config.headers.TOKEN = getToken();
+      config.headers.Authorization = getToken();
     }
     return config;
   },
@@ -21,11 +19,9 @@ requests.interceptors.request.use(
     ElMessage.error(error);
   }
 );
-//响应拦截器
+
 requests.interceptors.response.use(
   (response) => {
-    // 2xx 范围内的状态码都会触发该函数。
-    // 对响应数据做点什么
     return response;
   },
   (error) => {
