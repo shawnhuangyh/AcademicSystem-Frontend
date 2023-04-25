@@ -1,5 +1,5 @@
 <template>
-  {{ data }}
+<!--  {{ data }}-->
 </template>
 
 <script setup>
@@ -9,11 +9,11 @@ import {onMounted, ref} from "vue";
 const data = ref()
 
 const getDepartmentList = async () => {
-    const result = await departmentList({})
+    const result = await departmentList()
     if (result.status === 200) {
         data.value = result.data.results
     }
-    console.log(data.value)
+    // console.log(data.value)
 }
 
 onMounted(() => {
