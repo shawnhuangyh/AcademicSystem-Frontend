@@ -1,9 +1,9 @@
 import requests from "@/api/request";
 
 //获取验证码
-export const reqGetCode = (email) =>
+export const departmentList = () =>
   requests({
-    url: `/ec/send/${email}`,
+    url: `/department/`,
     method: "get",
   });
 
