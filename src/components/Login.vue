@@ -39,7 +39,7 @@ const login = async () => {
     const role = await get_user_role();
     if (role.data["is_superuser"] === true) {
       // 进入管理员后台
-      await router.push("/admin");
+      await router.push("/admin/class");
     } else if (role.data["is_staff"] === true) {
       // 进入教师后台
     } else {

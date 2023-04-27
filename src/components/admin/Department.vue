@@ -1,31 +1,34 @@
 <template>
-  <div class="table-box">
-    <el-table
-      :data="departments"
-      stripe
-      style="width: 100%"
-      :header-cell-style="{ 'text-align': 'center' }"
-      :cell-style="{ 'text-align': 'center' }"
-    >
-      <el-table-column prop="name" label="学院名称" width="180" />
-      <el-table-column prop="address" label="地址" />
-      <el-table-column prop="phone" label="联系电话" />
-    </el-table>
-  </div>
+  <admin-template>
+    <div class="table-box">
+      <el-table
+        :data="departments"
+        stripe
+        style="width: 100%"
+        :header-cell-style="{ 'text-align': 'center' }"
+        :cell-style="{ 'text-align': 'center' }"
+      >
+        <el-table-column prop="name" label="学院名称" width="180" />
+        <el-table-column prop="address" label="地址" />
+        <el-table-column prop="phone" label="联系电话" />
+      </el-table>
+    </div>
 
-  <div class="pagination-box">
-    <el-pagination
-      align="center"
-      layout="prev, pager, next"
-      :total="totalPage"
-      @current-change="pageChange"
-    />
-  </div>
+    <div class="pagination-box">
+      <el-pagination
+        align="center"
+        layout="prev, pager, next"
+        :total="totalPage"
+        @current-change="pageChange"
+      />
+    </div>
+  </admin-template>
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import { departmentList } from "@/api";
+import AdminTemplate from "@/components/admin/AdminTemplate.vue";
 
 // table
 const departments = ref();

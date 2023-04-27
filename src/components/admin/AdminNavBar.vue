@@ -10,7 +10,7 @@
       <template #title>
         <span>教学管理</span>
       </template>
-      <el-menu-item index="/admin">班级管理</el-menu-item>
+      <el-menu-item index="/admin/class">班级管理</el-menu-item>
       <el-menu-item index="course">课程管理</el-menu-item>
       <el-menu-item index="semester">学期管理</el-menu-item>
       <el-menu-item index="course_selection">选课管理</el-menu-item>
@@ -26,7 +26,7 @@
       <template #title>
         <span>学校管理</span>
       </template>
-      <el-menu-item index="department">学院管理</el-menu-item>
+      <el-menu-item index="/admin/department">学院管理</el-menu-item>
       <el-menu-item index="major">专业管理</el-menu-item>
     </el-sub-menu>
   </el-menu>
