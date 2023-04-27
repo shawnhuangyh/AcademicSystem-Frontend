@@ -29,5 +29,4 @@ requests.interceptors.response.use(
   }
 );
 
-//暴露axios
 export default requests;

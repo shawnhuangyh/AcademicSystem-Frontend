@@ -3,28 +3,40 @@
     <el-row>
       <el-col :span="22">
         <div class="form-box">
-          <el-form label-position="left" label-width="80px" :model="searchForm">
+          <el-form label-position="left" label-width="25%" :model="searchForm">
             <el-row :gutter="20" justify="center">
               <el-col :span="12">
                 <el-form-item label="课程号">
-                  <el-input v-model="searchForm.course_id" />
+                  <el-input
+                    v-model="searchForm.course__course_id__icontains"
+                    @focusout="getClassList"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="课程名称">
-                  <el-input v-model="searchForm.course_name" />
+                  <el-input
+                    v-model="searchForm.course__name__icontains"
+                    @focusout="getClassList"
+                  />
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row :gutter="20" justify="center">
               <el-col :span="12">
-                <el-form-item label="班级号">
-                  <el-input v-model="searchForm.class_id" />
+                <el-form-item label="教师姓名">
+                  <el-input
+                    v-model="searchForm.teacher__name__icontains"
+                    @focusout="getClassList"
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="教师姓名">
-                  <el-input v-model="searchForm.teacher_name" />
+                <el-form-item label="容量至少剩余">
+                  <el-input
+                    v-model="searchForm.remaining_selection__gte"
+                    @focusout="getClassList"
+                  />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -74,14 +86,14 @@
     </el-table>
   </div>
 
-  <div class="pagination-box">
-    <el-pagination
-      align="center"
-      layout="prev, pager, next"
-      :total="totalPage"
-      @current-change="pageChange"
-    />
-  </div>
+  <!--  <div class="pagination-box">-->
+  <!--    <el-pagination-->
+  <!--      align="center"-->
+  <!--      layout="prev, pager, next"-->
+  <!--      :total="totalPage"-->
+  <!--      @current-change="pageChange"-->
+  <!--    />-->
+  <!--  </div>-->
 
   <!--  addDialog-->
   <el-dialog v-model="addDialogFormVisible" title="增加新班级">
@@ -173,10 +185,10 @@ import {
 
 // search
 const searchForm = reactive({
-  course_id: "",
-  course_name: "",
-  class_id: "",
-  teacher_name: "",
+  course__course_id__icontains: "",
+  course__name__icontains: "",
+  teacher__name__icontains: "",
+  remaining_selection__gte: "",
 });
 //add
 const addDialogFormVisible = ref(false);
@@ -214,13 +226,7 @@ const totalPage = ref(0);
 
 // axios
 const getClassList = async () => {
-  const result = await get_class_List(
-    nowSelectedPage.value,
-    searchForm.course_id,
-    searchForm.course_name,
-    searchForm.class_id,
-    searchForm.teacher_name
-  );
+  const result = await get_class_List(nowSelectedPage.value, searchForm);
   totalPage.value = result.data.count;
   if (result.status === 200) {
     classes.value = result.data.results;
@@ -320,14 +326,7 @@ const handleModify = () => {
 };
 
 onMounted(() => {
-  getClassList(nowSelectedPage.value);
-  // setInterval(() => {
-  //   console.log(addForm);
-  // }, 5000);
-});
-
-watch(searchForm, () => {
-  getClassList(1);
+  getClassList();
 });
 </script>
 
