@@ -1,17 +1,4 @@
-<script setup>
-import { onMounted } from "vue";
-import { setToken } from "@/utils/token";
-import SelectCourse from "@/components/admin/Class.vue";
-import StudentClass from "@/components/student/StudentClass.vue";
-import Department from "@/components/admin/Department.vue";
-import Login from "@/components/Login.vue";
-
-onMounted(() => {
-  setToken(
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgyNjYxOTczLCJpYXQiOjE2ODI1NzU1MzUsImp0aSI6IjA5NzYzZTgwZDNhZTQyMWFhY2Q4YWQ2Mjk5NGVkYmMyIiwidXNlcl9pZCI6MX0.A_OE5TcFPS7d8OSMXWrNDPC6wbs5nxebVPyOnocdklU"
-  );
-});
-</script>
+<script setup></script>
 
 <template>
   <router-view />

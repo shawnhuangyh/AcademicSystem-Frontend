@@ -1,20 +1,55 @@
 <template>
-  <el-form label-position="left" label-width="25%" :model="searchForm">
-    <el-row :gutter="20" justify="center">
-      <el-col :span="12">
-        <el-form-item label="课程号">
-          <el-input />
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item label="课程名称">
-          <el-input />
-        </el-form-item>
-      </el-col>
-    </el-row>
-  </el-form>
+  <div class="login-form">
+    <el-form :model="loginForm" :rules="loginRules" ref="Form">
+      <el-form-item label="用户名" label-width="20%" prop="username">
+        <el-input v-model="loginForm.username"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" label-width="20%" prop="password">
+        <el-input type="password" v-model="loginForm.password"></el-input>
+      </el-form-item>
+    </el-form>
+    <span class="center">
+      <el-button type="primary" @click="login()">登录</el-button>
+    </span>
+  </div>
 </template>
+<script setup>
+import { reactive, ref } from "vue";
+import { ElForm, ElFormItem, ElInput, ElButton, ElMessage } from "element-plus";
+import { userLogin } from "@/api";
+import { setToken } from "@/utils/token";
+import { router } from "@/router";
 
-<script setup></script>
+const loginForm = reactive({
+  username: "shawn",
+  password: "admin",
+});
 
-<style scoped></style>
+const loginRules = ref({
+  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+});
+
+const login = async () => {
+  const result = await userLogin(loginForm);
+  setToken(result.data.access);
+  ElMessage.success("登录成功");
+  await router.push("/admin/class");
+};
+</script>
+<style scoped>
+.login-form {
+  border: 1px solid #dccfcf;
+  width: 350px;
+  margin: 180px auto;
+  padding: 20px 50px 20px 50px;
+  border-radius: 5px;
+  box-shadow: 0 0 25px #909399;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
