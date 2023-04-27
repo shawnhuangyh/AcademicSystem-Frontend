@@ -67,7 +67,7 @@
       <el-table-column prop="course.name" label="课程名称" width="180" />
       <el-table-column prop="course.credit" label="学分" />
       <el-table-column prop="teacher.name" label="教师姓名" />
-      <el-table-column prop="time" label="上课时间" />
+      <el-table-column :formatter="timeFormatter" label="上课时间" />
       <el-table-column prop="classroom" label="上课地点" />
       <el-table-column prop="max_selection" label="容量" />
       <el-table-column prop="current_selection" label="人数" />
@@ -168,6 +168,7 @@ import {
   get_course_ist,
   get_semester_ist,
   post_class,
+  put_class,
 } from "@/api";
 
 // search
@@ -252,6 +253,10 @@ const getSemesterList = async () => {
 const deleteClass = async () => {
   // console.log(nowSelectedRowData.value.class_id);
   await delete_class(nowSelectedRowData.value.class_id);
+};
+// table contents
+const timeFormatter = (row, col) => {
+  return row.time + row.start + "-" + row.end;
 };
 
 // mouse events
