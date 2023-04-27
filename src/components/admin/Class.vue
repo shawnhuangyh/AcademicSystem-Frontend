@@ -67,7 +67,7 @@
       <el-table-column prop="course.name" label="课程名称" width="180" />
       <el-table-column prop="course.credit" label="学分" />
       <el-table-column prop="teacher.name" label="教师姓名" />
-      <el-table-column prop="time" label="上课时间" />
+      <el-table-column :formatter="timeFormatter" label="上课时间" />
       <el-table-column prop="classroom" label="上课地点" />
       <el-table-column prop="max_selection" label="容量" />
       <el-table-column prop="current_selection" label="人数" />
@@ -112,30 +112,100 @@
           />
         </el-select>
       </el-form-item>
-      <!--      <el-form-item label="学期" label-width="140px">-->
-      <!--        <el-select v-model="addForm.semester_id" placeholder="学期选择">-->
-      <!--          <el-option-->
-      <!--            v-for="semester in semesters"-->
-      <!--            :label="semester.name"-->
-      <!--            :value="semester.semester_id"-->
-      <!--          />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="上课时间" label-width="140px">-->
-      <!--        <el-select v-model="addForm.time" placeholder="天">-->
-      <!--          <el-option v-for="day in days" :label="day" :value="day" />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="开始时间" label-width="140px">-->
-      <!--        <el-select v-model="addForm.start" placeholder="开始节">-->
-      <!--          <el-option v-for="time in times" :label="time" :value="time" />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="结束时间" label-width="140px">-->
-      <!--        <el-select v-model="addForm.end" placeholder="结束节">-->
-      <!--          <el-option v-for="time in times" :label="time" :value="time" />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
+      <el-form-item label="学期" label-width="140px">
+        <el-select v-model="addForm.semester_id" placeholder="学期选择">
+          <el-option
+            v-for="semester in semesters"
+            :label="semester.name"
+            :value="semester.semester_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="上课时间" label-width="140px">
+        <el-select v-model="addForm.time" placeholder="天">
+          <el-option v-for="day in days" :label="day" :value="day" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="开始时间" label-width="140px">
+        <el-select v-model="addForm.start" placeholder="开始节">
+          <el-option v-for="time in times" :label="time" :value="time" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="结束时间" label-width="140px">
+        <el-select v-model="addForm.end" placeholder="结束节">
+          <el-option v-for="time in times" :label="time" :value="time" />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="addDialogFormVisible = false">Cancel</el-button>
+        <el-button
+          type="primary"
+          @click="
+            addDialogFormVisible = false;
+            postClass();
+          "
+        >
+          Confirm
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+  <!--  modifyDialog-->
+  <el-dialog v-model="addDialogFormVisible" title="增加新班级">
+    <el-form :model="addForm">
+      <el-form-item label="课程名称" label-width="140px">
+        <el-select v-model="addForm.course_id" placeholder="请选择课程名称">
+          <el-option
+            v-for="course in courses"
+            :label="course.name"
+            :value="course.course_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="课程号" label-width="140px">
+        <el-input
+          disabled
+          :placeholder="addForm.course_id"
+          autocomplete="off"
+        />
+      </el-form-item>
+
+      <el-form-item label="教师姓名" label-width="140px">
+        <el-select v-model="addForm.teacher_id" placeholder="请选择教师姓名">
+          <el-option
+            v-for="teacher in teachers"
+            :label="teacher.name"
+            :value="teacher.teacher_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="学期" label-width="140px">
+        <el-select v-model="addForm.semester_id" placeholder="学期选择">
+          <el-option
+            v-for="semester in semesters"
+            :label="semester.name"
+            :value="semester.semester_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="上课时间" label-width="140px">
+        <el-select v-model="addForm.time" placeholder="天">
+          <el-option v-for="day in days" :label="day" :value="day" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="开始时间" label-width="140px">
+        <el-select v-model="addForm.start" placeholder="开始节">
+          <el-option v-for="time in times" :label="time" :value="time" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="结束时间" label-width="140px">
+        <el-select v-model="addForm.end" placeholder="结束节">
+          <el-option v-for="time in times" :label="time" :value="time" />
+        </el-select>
+      </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
@@ -164,6 +234,7 @@ import {
   get_course_ist,
   get_semester_ist,
   post_class,
+  put_class,
 } from "@/api";
 
 // search
@@ -178,7 +249,7 @@ const addDialogFormVisible = ref(false);
 const addForm = reactive({
   course_id: "",
   teacher_id: "",
-  // semester_id: "",
+  semester_id: "",
   // classroom: "erer",
   // time: "",
   // start: "",
@@ -212,7 +283,7 @@ const getClassList = async () => {
   }
 };
 const postClass = async () => {
-  console.log(JSON.stringify(addForm));
+  console.log(addForm);
   const result = await post_class(JSON.stringify(addForm));
   if (result.status === 200) {
     classes.value = result.data.results;
@@ -239,6 +310,10 @@ const getSemesterList = async () => {
 const deleteClass = async () => {
   // console.log(nowSelectedRowData.value.class_id);
   await delete_class(nowSelectedRowData.value.class_id);
+};
+// table contents
+const timeFormatter = (row, col) => {
+  return row.time + row.start + "-" + row.end;
 };
 
 // mouse events

@@ -52,6 +52,12 @@ export const post_class = (data) =>
     method: "post",
     data: data,
   });
+export const put_class = (data) =>
+  requests({
+    url: `/class/`,
+    method: "put",
+    data: data,
+  });
 export const courseSelectionList = () =>
   requests({
     url: `/course_selection/`,
