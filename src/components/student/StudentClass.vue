@@ -2,12 +2,12 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import { courseSelectionList } from "@/api";
+import { get_course_selection_list } from "@/api";
 
 const selectedClasses = ref();
 
 const getSelectedClassesList = async (pageNum) => {
-  const result = await courseSelectionList();
+  const result = await get_course_selection_list();
   console.log(result);
 
   if (result.status === 200) {

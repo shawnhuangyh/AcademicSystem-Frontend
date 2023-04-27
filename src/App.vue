@@ -13,7 +13,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <!--  <department></department>-->
+  <department></department>
   <select-course />
   <!--  <student-class />-->
 </template>
