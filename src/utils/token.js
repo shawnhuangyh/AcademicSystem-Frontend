@@ -8,4 +8,13 @@ export const getToken = () => {
 
 export const rmToken = () => {
   localStorage.removeItem("TOKEN");
+  localStorage.removeItem("ROLE");
+};
+
+export const setRole = (role) => {
+  localStorage.setItem("ROLE", role);
+};
+
+export const getRole = () => {
+  return localStorage.getItem("ROLE");
 };

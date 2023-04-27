@@ -12,4 +12,9 @@
 .el-pagination {
   justify-content: center;
 }
+html,
+body,
+#app {
+  height: 100%;
+}
 </style>

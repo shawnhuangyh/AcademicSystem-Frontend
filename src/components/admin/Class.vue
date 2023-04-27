@@ -1,249 +1,297 @@
 <template>
-  <div class="form-buttons-box">
-    <el-row>
-      <el-col :span="22">
-        <div class="form-box">
-          <el-form label-position="left" label-width="25%" :model="searchForm">
-            <el-row :gutter="20" justify="center">
-              <el-col :span="12">
-                <el-form-item label="课程号">
-                  <el-input
-                    v-model="searchForm.course__course_id__icontains"
-                    @focusout="getClassList"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="课程名称">
-                  <el-input
-                    v-model="searchForm.course__name__icontains"
-                    @focusout="getClassList"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" justify="center">
-              <el-col :span="12">
-                <el-form-item label="教师姓名">
-                  <el-input
-                    v-model="searchForm.teacher__name__icontains"
-                    @focusout="getClassList"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="容量至少剩余">
-                  <el-input
-                    v-model="searchForm.remaining_selection__gte"
-                    @focusout="getClassList"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
+  <el-container>
+    <el-header>Header</el-header>
+
+    <el-container>
+      <el-aside class="nav-bar">
+        <admin-nav-bar />
+      </el-aside>
+      <el-main>
+        <div class="form-buttons-box">
+          <el-row>
+            <el-col :span="22">
+              <div class="form-box">
+                <el-form
+                  label-position="left"
+                  label-width="25%"
+                  :model="searchForm"
+                >
+                  <el-row :gutter="20" justify="center">
+                    <el-col :span="12">
+                      <el-form-item label="课程号">
+                        <el-input
+                          v-model="searchForm.course__course_id__icontains"
+                          @focusout="getClassList"
+                        />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="课程名称">
+                        <el-input
+                          v-model="searchForm.course__name__icontains"
+                          @focusout="getClassList"
+                        />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                  <el-row :gutter="20" justify="center">
+                    <el-col :span="12">
+                      <el-form-item label="教师姓名">
+                        <el-input
+                          v-model="searchForm.teacher__name__icontains"
+                          @focusout="getClassList"
+                        />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="容量至少剩余">
+                        <el-input
+                          v-model="searchForm.remaining_selection__gte"
+                          @focusout="getClassList"
+                        />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-form>
+              </div>
+            </el-col>
+            <el-col :span="2">
+              <div class="buttons-box">
+                <el-row class="button-box">
+                  <el-button
+                    @click="
+                      addDialogFormVisible = true;
+                      refreshDialogData();
+                    "
+                    >增加
+                  </el-button>
+                </el-row>
+                <el-row class="button-box">
+                  <el-button @click="handleDeleteClick">删除</el-button>
+                </el-row>
+                <el-row class="button-box">
+                  <el-button @click="handleModifyClick">修改</el-button>
+                </el-row>
+              </div>
+            </el-col>
+          </el-row>
         </div>
-      </el-col>
-      <el-col :span="2">
-        <div class="buttons-box">
-          <el-row class="button-box">
-            <el-button
-              @click="
-                addDialogFormVisible = true;
-                refreshDialogData();
-              "
-              >增加</el-button
+
+        <div class="table-box">
+          <el-table
+            :data="slicedClasses"
+            stripe
+            highlight-current-row
+            style="width: 100%"
+            :header-cell-style="{ 'text-align': 'center' }"
+            :cell-style="{ 'text-align': 'center' }"
+            @row-click="handleSelectedRow"
+          >
+            <el-table-column
+              prop="course.course_id"
+              label="课程号"
+              width="180"
+            />
+            <el-table-column prop="course.name" label="课程名称" width="180" />
+            <el-table-column prop="course.credit" label="学分" />
+            <el-table-column prop="teacher.name" label="教师姓名" />
+            <el-table-column :formatter="timeFormatter" label="上课时间" />
+            <el-table-column prop="classroom" label="上课地点" />
+            <el-table-column prop="max_selection" label="容量" />
+            <el-table-column prop="current_selection" label="人数" />
+          </el-table>
+        </div>
+
+        <div class="pagination-box">
+          <el-pagination
+            align="center"
+            layout="prev, pager, next"
+            :total="totalPage"
+            :page-size="pageSize"
+            @current-change="pageChange"
+            :current-page="nowSelectedPage"
+          />
+        </div>
+
+        <!--  addDialog-->
+        <el-dialog v-model="addDialogFormVisible" title="增加新班级">
+          <el-form :model="addForm" ref="addFormRef" :rules="formRules">
+            <el-form-item label="课程名称" label-width="140px" prop="course_id">
+              <el-select
+                v-model="addForm.course_id"
+                placeholder="请选择课程名称"
+              >
+                <el-option
+                  v-for="course in courses"
+                  :label="course.name"
+                  :value="course.course_id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="课程号" label-width="140px">
+              <el-input
+                disabled
+                :placeholder="addForm.course_id"
+                autocomplete="off"
+              />
+            </el-form-item>
+
+            <el-form-item
+              label="教师姓名"
+              label-width="140px"
+              prop="teacher_id"
             >
-          </el-row>
-          <el-row class="button-box">
-            <el-button @click="handleDeleteClick">删除</el-button>
-          </el-row>
-          <el-row class="button-box">
-            <el-button @click="handleModifyClick">修改</el-button>
-          </el-row>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
+              <el-select
+                v-model="addForm.teacher_id"
+                placeholder="请选择教师姓名"
+              >
+                <el-option
+                  v-for="item in teachers"
+                  :label="item.name"
+                  :value="item.teacher_id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="学期" label-width="140px" prop="semester_id">
+              <el-select v-model="addForm.semester_id" placeholder="学期选择">
+                <el-option
+                  v-for="semester in semesters"
+                  :label="semester.name"
+                  :value="semester.semester_id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="上课时间" label-width="140px" prop="time">
+              <el-select v-model="addForm.time" placeholder="天">
+                <el-option v-for="day in days" :label="day" :value="day" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="开始时间" label-width="140px" prop="start">
+              <el-select v-model="addForm.start" placeholder="开始节">
+                <el-option v-for="time in times" :label="time" :value="time" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="结束时间" label-width="140px" prop="end">
+              <el-select v-model="addForm.end" placeholder="结束节">
+                <el-option v-for="time in times" :label="time" :value="time" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="上课教室" label-width="140px" prop="classroom">
+              <el-input
+                v-model="addForm.classroom"
+                placeholder="请输入上课教室"
+              />
+            </el-form-item>
+          </el-form>
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="resetForm(addFormRef)">重置</el-button>
+              <el-button
+                @click="
+                  addDialogFormVisible = false;
+                  resetForm(addFormRef);
+                "
+                >取消</el-button
+              >
+              <el-button type="primary" @click="handleAdd(addFormRef)">
+                提交
+              </el-button>
+            </span>
+          </template>
+        </el-dialog>
 
-  <div class="table-box">
-    <el-table
-      :data="slicedClasses"
-      stripe
-      highlight-current-row
-      style="width: 100%"
-      :header-cell-style="{ 'text-align': 'center' }"
-      :cell-style="{ 'text-align': 'center' }"
-      @row-click="handleSelectedRow"
-    >
-      <el-table-column prop="course.course_id" label="课程号" width="180" />
-      <el-table-column prop="course.name" label="课程名称" width="180" />
-      <el-table-column prop="course.credit" label="学分" />
-      <el-table-column prop="teacher.name" label="教师姓名" />
-      <el-table-column :formatter="timeFormatter" label="上课时间" />
-      <el-table-column prop="classroom" label="上课地点" />
-      <el-table-column prop="max_selection" label="容量" />
-      <el-table-column prop="current_selection" label="人数" />
-    </el-table>
-  </div>
+        <!--  modifyDialog-->
+        <el-dialog v-model="modifyDialogFormVisible" title="修改班级信息">
+          <el-form :model="modifyForm" ref="modifyFormRef" :rules="formRules">
+            <el-form-item label="课程名称" label-width="140px" prop="course_id">
+              <el-select
+                v-model="modifyForm.course_id"
+                placeholder="请选择课程名称"
+              >
+                <el-option
+                  v-for="course in courses"
+                  :label="course.name"
+                  :value="course.course_id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="课程号" label-width="140px">
+              <el-input
+                disabled
+                :placeholder="modifyForm.course_id"
+                autocomplete="off"
+              />
+            </el-form-item>
 
-  <div class="pagination-box">
-    <el-pagination
-      align="center"
-      layout="prev, pager, next"
-      :total="totalPage"
-      :page-size="pageSize"
-      @current-change="pageChange"
-      :current-page="nowSelectedPage"
-    />
-  </div>
-
-  <!--  addDialog-->
-  <el-dialog v-model="addDialogFormVisible" title="增加新班级">
-    <el-form :model="addForm" ref="addFormRef" :rules="formRules">
-      <el-form-item label="课程名称" label-width="140px" prop="course_id">
-        <el-select v-model="addForm.course_id" placeholder="请选择课程名称">
-          <el-option
-            v-for="course in courses"
-            :label="course.name"
-            :value="course.course_id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="课程号" label-width="140px">
-        <el-input
-          disabled
-          :placeholder="addForm.course_id"
-          autocomplete="off"
-        />
-      </el-form-item>
-
-      <el-form-item label="教师姓名" label-width="140px" prop="teacher_id">
-        <el-select v-model="addForm.teacher_id" placeholder="请选择教师姓名">
-          <el-option
-            v-for="item in teachers"
-            :label="item.name"
-            :value="item.teacher_id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="学期" label-width="140px" prop="semester_id">
-        <el-select v-model="addForm.semester_id" placeholder="学期选择">
-          <el-option
-            v-for="semester in semesters"
-            :label="semester.name"
-            :value="semester.semester_id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="上课时间" label-width="140px" prop="time">
-        <el-select v-model="addForm.time" placeholder="天">
-          <el-option v-for="day in days" :label="day" :value="day" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="开始时间" label-width="140px" prop="start">
-        <el-select v-model="addForm.start" placeholder="开始节">
-          <el-option v-for="time in times" :label="time" :value="time" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="结束时间" label-width="140px" prop="end">
-        <el-select v-model="addForm.end" placeholder="结束节">
-          <el-option v-for="time in times" :label="time" :value="time" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="上课教室" label-width="140px" prop="classroom">
-        <el-input v-model="addForm.classroom" placeholder="请输入上课教室" />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="resetForm(addFormRef)">重置</el-button>
-        <el-button
-          @click="
-            addDialogFormVisible = false;
-            resetForm(addFormRef);
-          "
-          >取消</el-button
-        >
-        <el-button type="primary" @click="handleAdd(addFormRef)">
-          提交
-        </el-button>
-      </span>
-    </template>
-  </el-dialog>
-
-  <!--  modifyDialog-->
-  <el-dialog v-model="modifyDialogFormVisible" title="修改班级信息">
-    <el-form :model="modifyForm" ref="modifyFormRef" :rules="formRules">
-      <el-form-item label="课程名称" label-width="140px" prop="course_id">
-        <el-select v-model="modifyForm.course_id" placeholder="请选择课程名称">
-          <el-option
-            v-for="course in courses"
-            :label="course.name"
-            :value="course.course_id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="课程号" label-width="140px">
-        <el-input
-          disabled
-          :placeholder="modifyForm.course_id"
-          autocomplete="off"
-        />
-      </el-form-item>
-
-      <el-form-item label="教师姓名" label-width="140px" prop="teacher_id">
-        <el-select v-model="modifyForm.teacher_id" placeholder="请选择教师姓名">
-          <el-option
-            v-for="item in teachers"
-            :label="item.name"
-            :value="item.teacher_id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="学期" label-width="140px" prop="semester_id">
-        <el-select v-model="modifyForm.semester_id" placeholder="学期选择">
-          <el-option
-            v-for="semester in semesters"
-            :label="semester.name"
-            :value="semester.semester_id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="上课时间" label-width="140px" prop="time">
-        <el-select v-model="modifyForm.time" placeholder="天">
-          <el-option v-for="day in days" :label="day" :value="day" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="开始时间" label-width="140px" prop="start">
-        <el-select v-model="modifyForm.start" placeholder="开始节">
-          <el-option v-for="time in times" :label="time" :value="time" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="结束时间" label-width="140px" prop="end">
-        <el-select v-model="modifyForm.end" placeholder="结束节">
-          <el-option v-for="time in times" :label="time" :value="time" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="上课教室" label-width="140px" prop="classroom">
-        <el-input v-model="modifyForm.classroom" placeholder="请输入上课教室" />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="resetForm(modifyFormRef)">重置</el-button>
-        <el-button
-          @click="
-            modifyDialogFormVisible = false;
-            resetForm(modifyFormRef);
-          "
-          >取消</el-button
-        >
-        <el-button type="primary" @click="handleModify(modifyFormRef)">
-          提交
-        </el-button>
-      </span>
-    </template>
-  </el-dialog>
+            <el-form-item
+              label="教师姓名"
+              label-width="140px"
+              prop="teacher_id"
+            >
+              <el-select
+                v-model="modifyForm.teacher_id"
+                placeholder="请选择教师姓名"
+              >
+                <el-option
+                  v-for="item in teachers"
+                  :label="item.name"
+                  :value="item.teacher_id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="学期" label-width="140px" prop="semester_id">
+              <el-select
+                v-model="modifyForm.semester_id"
+                placeholder="学期选择"
+              >
+                <el-option
+                  v-for="semester in semesters"
+                  :label="semester.name"
+                  :value="semester.semester_id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="上课时间" label-width="140px" prop="time">
+              <el-select v-model="modifyForm.time" placeholder="天">
+                <el-option v-for="day in days" :label="day" :value="day" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="开始时间" label-width="140px" prop="start">
+              <el-select v-model="modifyForm.start" placeholder="开始节">
+                <el-option v-for="time in times" :label="time" :value="time" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="结束时间" label-width="140px" prop="end">
+              <el-select v-model="modifyForm.end" placeholder="结束节">
+                <el-option v-for="time in times" :label="time" :value="time" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="上课教室" label-width="140px" prop="classroom">
+              <el-input
+                v-model="modifyForm.classroom"
+                placeholder="请输入上课教室"
+              />
+            </el-form-item>
+          </el-form>
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="resetForm(modifyFormRef)">重置</el-button>
+              <el-button
+                @click="
+                  modifyDialogFormVisible = false;
+                  resetForm(modifyFormRef);
+                "
+                >取消</el-button
+              >
+              <el-button type="primary" @click="handleModify(modifyFormRef)">
+                提交
+              </el-button>
+            </span>
+          </template>
+        </el-dialog>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
 <script setup>
@@ -258,6 +306,8 @@ import {
   post_class,
   put_class,
 } from "@/api";
+import AdminNavBar from "@/components/admin/AdminNavBar.vue";
+import { useRouter } from "vue-router";
 
 // search
 const searchForm = reactive({
@@ -496,12 +546,18 @@ const openLoading = () => {
 const closeLoading = () => {
   loading.value.close();
 };
+const activeIndex = computed(() => {
+  const { route, router } = useRouter();
+  console.log(route);
+  return route.path;
+});
 
 onMounted(() => {
   refreshTable();
   // setInterval(() => {
   //   console.log(totalPage.value);
   // }, 5000);
+  console.log(useRouter());
 });
 </script>
 
@@ -511,6 +567,7 @@ onMounted(() => {
   margin: 0 auto;
   height: 120px;
 }
+
 .form-box {
   margin: 15px 0;
 }
@@ -519,7 +576,20 @@ onMounted(() => {
   width: 100%;
   margin: 0 auto;
 }
+
 .button-box {
   margin: 5px 0 5px 20px;
+}
+
+.el-header {
+  background-color: #b3c0d1;
+  color: #333;
+  line-height: 60px;
+}
+
+.nav-bar {
+  color: #333;
+  width: 200px;
+  min-height: 100%;
 }
 </style>

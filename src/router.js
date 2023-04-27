@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { getToken } from "@/utils/token";
+import { ElMessage } from "element-plus";
 import Login from "@/components/Login.vue";
 import Class from "@/components/admin/Class.vue";
-import { ElMessage } from "element-plus";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,7 +12,7 @@ const router = createRouter({
       component: Login,
     },
     {
-      path: "/admin/class",
+      path: "/admin",
       component: Class,
     },
   ],

@@ -16,9 +16,10 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { ElForm, ElFormItem, ElInput, ElButton, ElMessage } from "element-plus";
-import { userLogin } from "@/api";
+import { get_user_role, user_login } from "@/api";
 import { setToken } from "@/utils/token";
 import { router } from "@/router";
+import { AxiosError } from "axios";
 
 const loginForm = reactive({
   username: "shawn",
@@ -31,10 +32,20 @@ const loginRules = ref({
 });
 
 const login = async () => {
-  const result = await userLogin(loginForm);
-  setToken(result.data.access);
-  ElMessage.success("登录成功");
-  await router.push("/admin/class");
+  const result = await user_login(loginForm);
+  if (!(result instanceof AxiosError)) {
+    setToken(result.data.access);
+    ElMessage.success("登录成功");
+    const role = await get_user_role();
+    if (role.data["is_superuser"] === true) {
+      // 进入管理员后台
+      await router.push("/admin");
+    } else if (role.data["is_staff"] === true) {
+      // 进入教师后台
+    } else {
+      // 进入学生后台
+    }
+  }
 };
 </script>
 <style scoped>

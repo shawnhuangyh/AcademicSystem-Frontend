@@ -51,9 +51,15 @@ export const get_course_selection_list = () =>
     url: `/course_selection/`,
     method: "get",
   });
-export const userLogin = (data) =>
+export const user_login = (data) =>
   requests({
     url: `/token/`,
     method: "post",
     data: data,
+  });
+
+export const get_user_role = () =>
+  requests({
+    url: `/user/role/`,
+    method: "get",
   });

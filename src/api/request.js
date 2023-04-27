@@ -6,7 +6,7 @@ import { router } from "@/router";
 
 const requests = axios.create({
   baseURL: "http://localhost:8000/v1",
-  timeout: 5000,
+  timeout: 10000,
 });
 
 requests.interceptors.request.use(
@@ -36,6 +36,7 @@ requests.interceptors.response.use(
         ElMessage.error(error);
         break;
     }
+    return error;
   }
 );
 
