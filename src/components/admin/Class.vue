@@ -67,7 +67,7 @@
 
   <div class="table-box">
     <el-table
-      :data="classes"
+      :data="slicedClasses"
       stripe
       highlight-current-row
       style="width: 100%"
@@ -91,7 +91,9 @@
       align="center"
       layout="prev, pager, next"
       :total="totalPage"
+      :page-size="pageSize"
       @current-change="pageChange"
+      :current-page="nowSelectedPage"
     />
   </div>
 
@@ -306,49 +308,62 @@ const days = ref(["一", "二", "三", "四", "五"]);
 const times = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
 // table
 const classes = ref();
+const slicedClasses = ref();
 const nowSelectedRowData = ref();
 // pagination
 const nowSelectedPage = ref(1);
+const pageSize = ref(10);
 const totalPage = ref(0);
+const paginationShow = ref(true);
 
 // axios
 const getClassList = async () => {
-  const result = await get_class_List(nowSelectedPage.value, searchForm);
-  totalPage.value = result.data.count;
+  const result = await get_class_List(searchForm);
+  totalPage.value = result.data.length;
   if (result.status === 200) {
-    classes.value = result.data.results;
+    classes.value = result.data;
+    console.log(classes.value);
   }
+};
+const sliceClassList = () => {
+  console.log(classes.value);
+  slicedClasses.value = classes.value.slice(
+    pageSize.value * (nowSelectedPage.value - 1),
+    pageSize.value * nowSelectedPage.value
+  );
 };
 const postClass = async () => {
   await post_class(addForm);
-  await getClassList();
+  await refreshTable();
 };
 const getTeacherList = async () => {
   const result = await get_teacher_list();
   if (result.status === 200) {
-    teachers.value = result.data.results;
+    teachers.value = result.data;
   }
 };
 const getCourseList = async () => {
   const result = await get_course_ist();
   if (result.status === 200) {
-    courses.value = result.data.results;
+    courses.value = result.data;
   }
 };
 const getSemesterList = async () => {
   const result = await get_semester_ist();
   if (result.status === 200) {
-    semesters.value = result.data.results;
+    semesters.value = result.data;
   }
 };
 const deleteClass = async () => {
   // console.log(nowSelectedRowData.value.class_id);
   await delete_class(nowSelectedRowData.value.class_id);
   await getClassList();
+  await refreshTable();
 };
 const putClass = async () => {
   await put_class(modifyForm);
   await getClassList();
+  await refreshTable();
 };
 // table contents
 const timeFormatter = (row, col) => {
@@ -358,7 +373,7 @@ const timeFormatter = (row, col) => {
 // mouse events
 const pageChange = (param) => {
   nowSelectedPage.value = param;
-  getClassList();
+  sliceClassList();
 };
 const handleSelectedRow = (param) => {
   console.log(param);
@@ -460,8 +475,17 @@ const handleModify = async (formEl) => {
   });
 };
 
+const refreshTable = async () => {
+  await getClassList();
+  nowSelectedPage.value = 1;
+  sliceClassList();
+};
+
 onMounted(() => {
-  getClassList();
+  refreshTable();
+  // setInterval(() => {
+  //   console.log(totalPage.value);
+  // }, 5000);
 });
 </script>
 

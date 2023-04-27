@@ -18,7 +18,7 @@ export const get_course_ist = () =>
     method: "get",
   });
 
-export const get_class_List = (pageNum, data) =>
+export const get_class_List = (data) =>
   requests({
     url: `/class/`,
     method: "get",

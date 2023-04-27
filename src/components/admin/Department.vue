@@ -33,15 +33,15 @@ const departments = ref();
 const nowSelectedPage = ref(1);
 const totalPage = ref(0);
 
-const getDepartmentList = async (pageNum) => {
-  const result = await departmentList(pageNum);
-  console.log(result);
+const getDepartmentList = async () => {
+  const result = await departmentList();
+  // console.log(result);
 
-  totalPage.value = result.data.count;
+  // totalPage.value = result.data.count;
   if (result.status === 200) {
-    departments.value = result.data.results;
+    departments.value = result.data;
   }
-  console.log(departments.value);
+  // console.log(departments.value);
 };
 const pageChange = (param) => {
   nowSelectedPage.value = param;
