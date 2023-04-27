@@ -43,10 +43,10 @@
             >
           </el-row>
           <el-row class="button-box">
-            <el-button @click="handleDelete">删除</el-button>
+            <el-button @click="handleDeleteClick">删除</el-button>
           </el-row>
           <el-row class="button-box">
-            <el-button @click="handleModify">修改</el-button>
+            <el-button @click="handleModifyClick">修改</el-button>
           </el-row>
         </div>
       </el-col>
@@ -85,7 +85,7 @@
 
   <!--  addDialog-->
   <el-dialog v-model="addDialogFormVisible" title="增加新班级">
-    <el-form :model="addForm" ref="ruleFormRef" :rules="formRules">
+    <el-form :model="addForm" ref="addFormRef" :rules="formRules">
       <el-form-item label="课程名称" label-width="140px" prop="course_id">
         <el-select v-model="addForm.course_id" placeholder="请选择课程名称">
           <el-option
@@ -142,15 +142,89 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+        <el-button @click="resetForm(addFormRef)">重置</el-button>
         <el-button
           @click="
             addDialogFormVisible = false;
-            resetForm(ruleFormRef);
+            resetForm(addFormRef);
           "
           >取消</el-button
         >
-        <el-button type="primary" @click="handleAdd(ruleFormRef)">
+        <el-button type="primary" @click="handleAdd(addFormRef)">
+          提交
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+  <!--  modifyDialog-->
+  <el-dialog v-model="modifyDialogFormVisible" title="修改班级信息">
+    <el-form :model="modifyForm" ref="modifyFormRef" :rules="formRules">
+      <el-form-item label="课程名称" label-width="140px" prop="course_id">
+        <el-select v-model="modifyForm.course_id" placeholder="请选择课程名称">
+          <el-option
+            v-for="course in courses"
+            :label="course.name"
+            :value="course.course_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="课程号" label-width="140px">
+        <el-input
+          disabled
+          :placeholder="modifyForm.course_id"
+          autocomplete="off"
+        />
+      </el-form-item>
+
+      <el-form-item label="教师姓名" label-width="140px" prop="teacher_id">
+        <el-select v-model="modifyForm.teacher_id" placeholder="请选择教师姓名">
+          <el-option
+            v-for="item in teachers"
+            :label="item.name"
+            :value="item.teacher_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="学期" label-width="140px" prop="semester_id">
+        <el-select v-model="modifyForm.semester_id" placeholder="学期选择">
+          <el-option
+            v-for="semester in semesters"
+            :label="semester.name"
+            :value="semester.semester_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="上课时间" label-width="140px" prop="time">
+        <el-select v-model="modifyForm.time" placeholder="天">
+          <el-option v-for="day in days" :label="day" :value="day" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="开始时间" label-width="140px" prop="start">
+        <el-select v-model="modifyForm.start" placeholder="开始节">
+          <el-option v-for="time in times" :label="time" :value="time" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="结束时间" label-width="140px" prop="end">
+        <el-select v-model="modifyForm.end" placeholder="结束节">
+          <el-option v-for="time in times" :label="time" :value="time" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="上课教室" label-width="140px" prop="classroom">
+        <el-input v-model="modifyForm.classroom" placeholder="请输入上课教室" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="resetForm(modifyFormRef)">重置</el-button>
+        <el-button
+          @click="
+            modifyDialogFormVisible = false;
+            resetForm(modifyFormRef);
+          "
+          >取消</el-button
+        >
+        <el-button type="primary" @click="handleModify(modifyFormRef)">
           提交
         </el-button>
       </span>
@@ -180,7 +254,7 @@ const searchForm = reactive({
 });
 //add
 const addDialogFormVisible = ref(false);
-const ruleFormRef = ref();
+const addFormRef = ref();
 const addForm = reactive({
   course_id: "",
   teacher_id: "",
@@ -198,6 +272,19 @@ const formRules = reactive({
   start: [{ required: true, message: "请选择开始时间", trigger: "blur" }],
   end: [{ required: true, message: "请选择结束时间", trigger: "blur" }],
   classroom: [{ required: true, message: "请输入上课教室", trigger: "blur" }],
+});
+const modifyDialogFormVisible = ref(false);
+const modifyFormRef = ref();
+const modifyForm = reactive({
+  class_id: "",
+  course_name: "",
+  course_id: "",
+  teacher_id: "",
+  semester_id: "",
+  classroom: "",
+  time: "",
+  start: "",
+  end: "",
 });
 // select options
 const courses = ref();
@@ -227,10 +314,8 @@ const getClassList = async () => {
   }
 };
 const postClass = async () => {
-  const result = await post_class(addForm);
-  if (result.status === 200) {
-    classes.value = result.data.results;
-  }
+  await post_class(addForm);
+  await getClassList();
 };
 const getTeacherList = async () => {
   const result = await get_teacher_list();
@@ -253,6 +338,11 @@ const getSemesterList = async () => {
 const deleteClass = async () => {
   // console.log(nowSelectedRowData.value.class_id);
   await delete_class(nowSelectedRowData.value.class_id);
+  await getClassList();
+};
+const putClass = async () => {
+  await put_class(modifyForm);
+  await getClassList();
 };
 // table contents
 const timeFormatter = (row, col) => {
@@ -268,10 +358,43 @@ const handleSelectedRow = (param) => {
   console.log(param);
   nowSelectedRowData.value = param;
 };
+const handleModifyClick = () => {
+  if (!nowSelectedRowData.value) {
+    ElMessage({
+      type: "error",
+      message: "未选中行",
+    });
+  } else {
+    modifyDialogFormVisible.value = true;
+    refreshDialogData();
+    refreshModifyForm();
+  }
+};
+const handleDeleteClick = () => {
+  if (!nowSelectedRowData.value) {
+    ElMessage({
+      type: "error",
+      message: "未选中行",
+    });
+  } else {
+    handleDelete();
+  }
+};
 const refreshDialogData = () => {
   getTeacherList();
   getCourseList();
   getSemesterList();
+};
+const refreshModifyForm = () => {
+  modifyForm.class_id = nowSelectedRowData.value.class_id;
+  modifyForm.course_id = nowSelectedRowData.value.course.course_id;
+  modifyForm.course_name = nowSelectedRowData.value.course.course_name;
+  modifyForm.teacher_id = nowSelectedRowData.value.teacher.teacher_id;
+  modifyForm.semester_id = nowSelectedRowData.value.semester.semester_id;
+  modifyForm.classroom = nowSelectedRowData.value.classroom;
+  modifyForm.time = nowSelectedRowData.value.time;
+  modifyForm.start = nowSelectedRowData.value.start;
+  modifyForm.end = nowSelectedRowData.value.end;
 };
 const resetForm = (formEl) => formEl.resetFields();
 const handleAdd = async (formEl) => {
@@ -283,12 +406,11 @@ const handleAdd = async (formEl) => {
         message: "新增课程成功",
       });
       addDialogFormVisible.value = false;
-      getClassList();
       resetForm(formEl);
     } else {
       ElMessage({
         type: "error",
-        message: "请完整的填写课程信息",
+        message: "请填写完整的课程信息",
       });
     }
   });
@@ -306,7 +428,6 @@ const handleDelete = () => {
         type: "success",
         message: "删除操作成功",
       });
-      getClassList();
     })
     .catch(() => {
       ElMessage({
@@ -315,15 +436,29 @@ const handleDelete = () => {
       });
     });
 };
-const handleModify = () => {
-  //
+const handleModify = async (formEl) => {
+  await formEl.validate((valid) => {
+    if (valid) {
+      putClass();
+      ElMessage({
+        type: "success",
+        message: "修改课程成功",
+      });
+      modifyDialogFormVisible.value = false;
+    } else {
+      ElMessage({
+        type: "error",
+        message: "请填写完整的课程信息",
+      });
+    }
+  });
 };
 
 onMounted(() => {
-  getClassList(nowSelectedPage.value);
-  // setInterval(() => {
-  //   console.log(addForm);
-  // }, 5000);
+  getClassList();
+  setInterval(() => {
+    console.log(nowSelectedRowData);
+  }, 5000);
 });
 
 watch(searchForm, () => {
@@ -346,6 +481,6 @@ watch(searchForm, () => {
   margin: 0 auto;
 }
 .button-box {
-  margin: 5px 0px 5px 20px;
+  margin: 5px 0 5px 20px;
 }
 </style>
