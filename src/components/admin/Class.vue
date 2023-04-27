@@ -248,7 +248,7 @@
 
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { ElMessageBox, ElMessage } from "element-plus";
+import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
 import {
   get_class_List,
   delete_class,
@@ -315,7 +315,8 @@ const nowSelectedPage = ref(1);
 const pageSize = ref(10);
 const totalPage = ref(0);
 const paginationShow = ref(true);
-
+// loading
+const loading = ref();
 // axios
 const getClassList = async () => {
   const result = await get_class_List(searchForm);
@@ -333,8 +334,10 @@ const sliceClassList = () => {
   );
 };
 const postClass = async () => {
+  openLoading();
   await post_class(addForm);
   await refreshTable();
+  closeLoading();
 };
 const getTeacherList = async () => {
   const result = await get_teacher_list();
@@ -355,15 +358,16 @@ const getSemesterList = async () => {
   }
 };
 const deleteClass = async () => {
-  // console.log(nowSelectedRowData.value.class_id);
+  openLoading();
   await delete_class(nowSelectedRowData.value.class_id);
-  await getClassList();
   await refreshTable();
+  closeLoading();
 };
 const putClass = async () => {
+  openLoading();
   await put_class(modifyForm);
-  await getClassList();
   await refreshTable();
+  closeLoading();
 };
 // table contents
 const timeFormatter = (row, col) => {
@@ -479,6 +483,18 @@ const refreshTable = async () => {
   await getClassList();
   nowSelectedPage.value = 1;
   sliceClassList();
+};
+
+// loading
+const openLoading = () => {
+  loading.value = ElLoading.service({
+    lock: true,
+    text: "Loading",
+    background: "rgba(0,0,0,0.5)",
+  });
+};
+const closeLoading = () => {
+  loading.value.close();
 };
 
 onMounted(() => {
