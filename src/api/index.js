@@ -18,23 +18,11 @@ export const get_course_ist = () =>
     method: "get",
   });
 
-export const get_class_List = (
-  pageNum,
-  course_id,
-  course_name,
-  class_id,
-  teacher_name
-) =>
+export const get_class_List = (pageNum, data) =>
   requests({
     url: `/class/`,
     method: "get",
-    params: {
-      page: pageNum,
-      course__course_id: course_id,
-      course__name: course_name,
-      class_no: class_id,
-      teacher__name: teacher_name,
-    },
+    params: data,
   });
 export const get_semester_ist = () =>
   requests({
@@ -63,21 +51,9 @@ export const get_course_selection_list = () =>
     url: `/course_selection/`,
     method: "get",
   });
-
-//注册用户
-export const reqRegister = (data) => {
-  console.log(data);
+export const userLogin = (data) =>
   requests({
-    url: "/user/register",
+    url: `/token/`,
     method: "post",
-    data,
-  });
-};
-
-//用户登录
-export const reqLogin = (data) =>
-  requests({
-    url: "/user/login",
-    method: "post",
-    data,
+    data: data,
   });

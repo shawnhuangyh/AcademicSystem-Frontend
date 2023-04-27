@@ -4,6 +4,7 @@ import { setToken } from "@/utils/token";
 import SelectCourse from "@/components/admin/Class.vue";
 import StudentClass from "@/components/student/StudentClass.vue";
 import Department from "@/components/admin/Department.vue";
+import Login from "@/components/Login.vue";
 
 onMounted(() => {
   setToken(
@@ -13,9 +14,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <department></department>
-  <select-course />
-  <!--  <student-class />-->
+  <router-view />
 </template>
 
 <style>
