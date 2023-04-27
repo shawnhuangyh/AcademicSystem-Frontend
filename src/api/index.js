@@ -6,19 +6,19 @@ export const departmentList = () =>
     method: "get",
   });
 
-export const teacherList = () =>
+export const get_teacher_list = () =>
   requests({
     url: `/teacher/`,
     method: "get",
   });
 
-export const courseList = () =>
+export const get_course_ist = () =>
   requests({
     url: `/course/`,
     method: "get",
   });
 
-export const classList = (
+export const get_class_List = (
   pageNum,
   course_id,
   course_name,
@@ -36,6 +36,22 @@ export const classList = (
       teacher__name: teacher_name,
     },
   });
+export const get_semester_ist = () =>
+  requests({
+    url: `/semester/`,
+    method: "get",
+  });
+export const delete_class = (class_id) =>
+  requests({
+    url: `/class/${class_id}/`,
+    method: "delete",
+  });
+export const post_class = (data) =>
+  requests({
+    url: `/class/`,
+    method: "post",
+    data: data,
+  });
 export const courseSelectionList = () =>
   requests({
     url: `/course_selection/`,
@@ -43,12 +59,14 @@ export const courseSelectionList = () =>
   });
 
 //注册用户
-export const reqRegister = (data) =>
+export const reqRegister = (data) => {
+  console.log(data);
   requests({
     url: "/user/register",
     method: "post",
     data,
   });
+};
 
 //用户登录
 export const reqLogin = (data) =>

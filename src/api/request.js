@@ -1,7 +1,7 @@
 import axios from "axios";
 
-import {getToken} from "@/utils/token";
-import {ElMessage} from "element-plus";
+import { getToken } from "@/utils/token";
+import { ElMessage } from "element-plus";
 
 const requests = axios.create({
   baseURL: "http://localhost:8000/v1",
@@ -11,7 +11,7 @@ const requests = axios.create({
 requests.interceptors.request.use(
   (config) => {
     if (getToken()) {
-      config.headers.Authorization = getToken();
+      config.headers.Authorization = `Bearer ${getToken()}`;
     }
     return config;
   },

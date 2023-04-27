@@ -7,7 +7,7 @@ import Department from "@/components/admin/Department.vue";
 
 onMounted(() => {
   setToken(
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgyNDkxMDc0LCJpYXQiOjE2ODI0MDQ2NzQsImp0aSI6IjBhNTBlNTNhNTZmNTQyYTY5ZDdmYzFmYzUxMDYxNzRlIiwidXNlcl9pZCI6MX0.fuvg4hvY9HpXHx7NeP6TE-xMst55MoXa_BGsVUee6nE"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgyNTcyMTI3LCJpYXQiOjE2ODI0ODU3MjcsImp0aSI6ImVjNzRiYzIyMGM1ZDQ1ZmNiMzc4Mjc1Yzg4NTQ5YmE3IiwidXNlcl9pZCI6MX0.BZ8hSD1KtFFj271msMhjmqYOXwLPpYa1BXTuKNNC-34"
   );
 });
 </script>
