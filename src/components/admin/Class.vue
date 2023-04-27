@@ -345,12 +345,14 @@ const paginationShow = ref(true);
 const loading = ref();
 // axios
 const getClassList = async () => {
+  openLoading();
   const result = await get_class_List(searchForm);
   totalPage.value = result.data.length;
   if (result.status === 200) {
     classes.value = result.data;
     console.log(classes.value);
   }
+  closeLoading();
 };
 const sliceClassList = () => {
   console.log(classes.value);
