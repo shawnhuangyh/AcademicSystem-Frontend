@@ -85,8 +85,8 @@
 
   <!--  addDialog-->
   <el-dialog v-model="addDialogFormVisible" title="增加新班级">
-    <el-form :model="addForm">
-      <el-form-item label="课程名称" label-width="140px">
+    <el-form :model="addForm" ref="ruleFormRef" :rules="formRules">
+      <el-form-item label="课程名称" label-width="140px" prop="course_id">
         <el-select v-model="addForm.course_id" placeholder="请选择课程名称">
           <el-option
             v-for="course in courses"
@@ -103,51 +103,55 @@
         />
       </el-form-item>
 
-      <el-form-item label="教师姓名" label-width="140px">
+      <el-form-item label="教师姓名" label-width="140px" prop="teacher_id">
         <el-select v-model="addForm.teacher_id" placeholder="请选择教师姓名">
           <el-option
-            v-for="teacher in teachers"
-            :label="teacher.name"
-            :value="teacher.teacher_id"
+            v-for="item in teachers"
+            :label="item.name"
+            :value="item.teacher_id"
           />
         </el-select>
       </el-form-item>
-      <!--      <el-form-item label="学期" label-width="140px">-->
-      <!--        <el-select v-model="addForm.semester_id" placeholder="学期选择">-->
-      <!--          <el-option-->
-      <!--            v-for="semester in semesters"-->
-      <!--            :label="semester.name"-->
-      <!--            :value="semester.semester_id"-->
-      <!--          />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="上课时间" label-width="140px">-->
-      <!--        <el-select v-model="addForm.time" placeholder="天">-->
-      <!--          <el-option v-for="day in days" :label="day" :value="day" />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="开始时间" label-width="140px">-->
-      <!--        <el-select v-model="addForm.start" placeholder="开始节">-->
-      <!--          <el-option v-for="time in times" :label="time" :value="time" />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
-      <!--      <el-form-item label="结束时间" label-width="140px">-->
-      <!--        <el-select v-model="addForm.end" placeholder="结束节">-->
-      <!--          <el-option v-for="time in times" :label="time" :value="time" />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
+      <el-form-item label="学期" label-width="140px" prop="semester_id">
+        <el-select v-model="addForm.semester_id" placeholder="学期选择">
+          <el-option
+            v-for="semester in semesters"
+            :label="semester.name"
+            :value="semester.semester_id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="上课时间" label-width="140px" prop="time">
+        <el-select v-model="addForm.time" placeholder="天">
+          <el-option v-for="day in days" :label="day" :value="day" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="开始时间" label-width="140px" prop="start">
+        <el-select v-model="addForm.start" placeholder="开始节">
+          <el-option v-for="time in times" :label="time" :value="time" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="结束时间" label-width="140px" prop="end">
+        <el-select v-model="addForm.end" placeholder="结束节">
+          <el-option v-for="time in times" :label="time" :value="time" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="上课教室" label-width="140px" prop="classroom">
+        <el-input v-model="addForm.classroom" placeholder="请输入上课教室" />
+      </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="addDialogFormVisible = false">Cancel</el-button>
+        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
         <el-button
-          type="primary"
           @click="
             addDialogFormVisible = false;
-            postClass();
+            resetForm(ruleFormRef);
           "
+          >取消</el-button
         >
-          Confirm
+        <el-button type="primary" @click="handleAdd(ruleFormRef)">
+          提交
         </el-button>
       </span>
     </template>
@@ -175,14 +179,24 @@ const searchForm = reactive({
 });
 //add
 const addDialogFormVisible = ref(false);
+const ruleFormRef = ref();
 const addForm = reactive({
   course_id: "",
   teacher_id: "",
-  // semester_id: "",
-  // classroom: "erer",
-  // time: "",
-  // start: "",
-  // end: "",
+  semester_id: "",
+  time: "",
+  start: "",
+  end: "",
+  classroom: "",
+});
+const formRules = reactive({
+  course_id: [{ required: true, message: "请选择课程名称", trigger: "blur" }],
+  teacher_id: [{ required: true, message: "请选择教师", trigger: "blur" }],
+  semester_id: [{ required: true, message: "请选择学期", trigger: "blur" }],
+  time: [{ required: true, message: "请选择上课时间", trigger: "blur" }],
+  start: [{ required: true, message: "请选择开始时间", trigger: "blur" }],
+  end: [{ required: true, message: "请选择结束时间", trigger: "blur" }],
+  classroom: [{ required: true, message: "请输入上课教室", trigger: "blur" }],
 });
 // select options
 const courses = ref();
@@ -212,8 +226,7 @@ const getClassList = async () => {
   }
 };
 const postClass = async () => {
-  console.log(JSON.stringify(addForm));
-  const result = await post_class(JSON.stringify(addForm));
+  const result = await post_class(addForm);
   if (result.status === 200) {
     classes.value = result.data.results;
   }
@@ -255,7 +268,26 @@ const refreshDialogData = () => {
   getCourseList();
   getSemesterList();
 };
-const handleAdd = () => {};
+const resetForm = (formEl) => formEl.resetFields();
+const handleAdd = async (formEl) => {
+  await formEl.validate((valid) => {
+    if (valid) {
+      postClass();
+      ElMessage({
+        type: "success",
+        message: "新增课程成功",
+      });
+      addDialogFormVisible.value = false;
+      getClassList();
+      resetForm(formEl);
+    } else {
+      ElMessage({
+        type: "error",
+        message: "请完整的填写课程信息",
+      });
+    }
+  });
+};
 const handleDelete = () => {
   // 确认框
   ElMessageBox.confirm("是否删除当前选中行记录?", "", {
