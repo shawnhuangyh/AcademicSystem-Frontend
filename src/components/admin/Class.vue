@@ -7,7 +7,7 @@
             <div class="form-box">
               <el-form
                 label-position="left"
-                label-width="25%"
+                label-width="30%"
                 :model="searchForm"
               >
                 <el-row :gutter="20" justify="center">
@@ -15,7 +15,7 @@
                     <el-form-item label="课程号">
                       <el-input
                         v-model="searchForm.course__course_id__icontains"
-                        @focusout="getClassList"
+                        @focusout="refreshTable"
                       />
                     </el-form-item>
                   </el-col>
@@ -23,26 +23,40 @@
                     <el-form-item label="课程名称">
                       <el-input
                         v-model="searchForm.course__name__icontains"
-                        @focusout="getClassList"
+                        @focusout="refreshTable"
                       />
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row :gutter="20" justify="center">
-                  <el-col :span="12">
+                  <el-col :span="8">
                     <el-form-item label="教师姓名">
                       <el-input
                         v-model="searchForm.teacher__name__icontains"
-                        @focusout="getClassList"
+                        @focusout="refreshTable"
                       />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="容量至少剩余">
+                  <el-col :span="8">
+                    <el-form-item label="容量剩余">
                       <el-input
                         v-model="searchForm.remaining_selection__gte"
-                        @focusout="getClassList"
+                        @focusout="refreshTable"
                       />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-form-item label="学期">
+                      <el-select
+                        v-model="searchForm.semester__semester_id"
+                        @change="refreshTable"
+                      >
+                        <el-option
+                          v-for="semester in semesters"
+                          :label="semester.name"
+                          :value="semester.semester_id"
+                        />
+                      </el-select>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -291,6 +305,7 @@ const searchForm = reactive({
   course__name__icontains: "",
   teacher__name__icontains: "",
   remaining_selection__gte: "",
+  semester__semester_id: 1,
 });
 //add
 const addDialogFormVisible = ref(false);
@@ -350,12 +365,10 @@ const getClassList = async () => {
   totalPage.value = result.data.length;
   if (result.status === 200) {
     classes.value = result.data;
-    console.log(classes.value);
   }
   closeLoading();
 };
 const sliceClassList = () => {
-  console.log(classes.value);
   slicedClasses.value = classes.value.slice(
     pageSize.value * (nowSelectedPage.value - 1),
     pageSize.value * nowSelectedPage.value
@@ -524,18 +537,13 @@ const openLoading = () => {
 const closeLoading = () => {
   loading.value.close();
 };
-const activeIndex = computed(() => {
-  const { route, router } = useRouter();
-  console.log(route);
-  return route.path;
-});
 
 onMounted(() => {
   refreshTable();
+  getSemesterList();
   // setInterval(() => {
   //   console.log(totalPage.value);
   // }, 5000);
-  console.log(useRouter());
 });
 </script>
 
@@ -557,5 +565,9 @@ onMounted(() => {
 
 .button-box {
   margin: 5px 0 5px 20px;
+}
+
+.small-input-box {
+  width: 60%;
 }
 </style>

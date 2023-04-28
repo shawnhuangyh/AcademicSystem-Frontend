@@ -3,8 +3,8 @@
     default-active="2"
     class="el-menu-vertical"
     :default-openeds="['0', '1', '2']"
-    :router="true"
-    :default-active="activeIndex"
+    router
+    :default-active="$route.path"
   >
     <el-sub-menu index="0">
       <template #title>
@@ -31,11 +31,6 @@
     </el-sub-menu>
   </el-menu>
 </template>
-
-<script setup>
-import { computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
-</script>
 
 <style scoped>
 .el-menu-vertical {
