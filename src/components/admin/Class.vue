@@ -420,7 +420,6 @@ const pageChange = (param) => {
   sliceClassList();
 };
 const handleSelectedRow = (param) => {
-  console.log(param);
   nowSelectedRowData.value = param;
 };
 const handleModifyClick = () => {
@@ -540,9 +539,6 @@ const closeLoading = () => {
 onMounted(() => {
   refreshTable();
   getSemesterList();
-  // setInterval(() => {
-  //   console.log(totalPage.value);
-  // }, 5000);
 });
 </script>
 

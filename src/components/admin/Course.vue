@@ -254,9 +254,7 @@ const pageChange = (param) => {
   sliceCourseList();
 };
 const handleSelectedRow = (param) => {
-  console.log(param);
   nowSelectedRowData.value = param;
-  console.log(nowSelectedRowData.value);
 };
 const handleModifyClick = () => {
   if (!nowSelectedRowData.value) {
@@ -285,7 +283,6 @@ const refreshDialogData = () => {
   getDepartmentList();
 };
 const refreshModifyForm = () => {
-  console.log(nowSelectedRowData.value);
   modifyForm.course_id = nowSelectedRowData.value.course_id;
   modifyForm.name = nowSelectedRowData.value.name;
   modifyForm.credit = nowSelectedRowData.value.credit;

@@ -14,7 +14,7 @@
       </div>
       <div class="table-box">
         <el-table
-          :data="slicedDepartments"
+          :data="slicedSemesters"
           stripe
           highlight-current-row
           style="width: 100%"
@@ -22,9 +22,7 @@
           :cell-style="{ 'text-align': 'center' }"
           @row-click="handleSelectedRow"
         >
-          <el-table-column prop="name" label="学院名称" width="180" />
-          <el-table-column prop="address" label="地址" width="180" />
-          <el-table-column prop="phone" label="联系方式" />
+          <el-table-column prop="name" label="学期名称" />
         </el-table>
       </div>
 
@@ -40,16 +38,10 @@
       </div>
 
       <!--  addDialog-->
-      <el-dialog v-model="addDialogFormVisible" title="增加新学院">
+      <el-dialog v-model="addDialogFormVisible" title="增加新学期">
         <el-form :model="addForm" ref="addFormRef" :rules="formRules">
-          <el-form-item label="学院名称" label-width="140px" prop="name">
-            <el-input v-model="addForm.name" placeholder="请输入学院名称" />
-          </el-form-item>
-          <el-form-item label="地址" label-width="140px" prop="address">
-            <el-input v-model="addForm.address" placeholder="请输入地址信息" />
-          </el-form-item>
-          <el-form-item label="联系方式" label-width="140px" prop="phone">
-            <el-input v-model="addForm.phone" placeholder="请输入联系方式" />
+          <el-form-item label="学期名称" label-width="140px" prop="name">
+            <el-input v-model="addForm.name" placeholder="请输入学期名称" />
           </el-form-item>
         </el-form>
         <template #footer>
@@ -70,19 +62,10 @@
       </el-dialog>
 
       <!--  modifyDialog-->
-      <el-dialog v-model="modifyDialogFormVisible" title="修改学院信息">
+      <el-dialog v-model="modifyDialogFormVisible" title="修改学期信息">
         <el-form :model="modifyForm" ref="modifyFormRef" :rules="formRules">
-          <el-form-item label="学院名称" label-width="140px" prop="name">
-            <el-input v-model="modifyForm.name" placeholder="请输入学院名称" />
-          </el-form-item>
-          <el-form-item label="地址" label-width="140px" prop="address">
-            <el-input
-              v-model="modifyForm.address"
-              placeholder="请输入地址信息"
-            />
-          </el-form-item>
-          <el-form-item label="联系方式" label-width="140px" prop="phone">
-            <el-input v-model="modifyForm.phone" placeholder="请输入联系方式" />
+          <el-form-item label="学期名称" label-width="140px" prop="name">
+            <el-input v-model="modifyForm.name" placeholder="请输入学期名称" />
           </el-form-item>
         </el-form>
         <template #footer>
@@ -109,13 +92,11 @@
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
 import {
-  delete_department,
-  get_department_list,
-  put_department,
-  post_department,
+  get_semester_list,
+  post_semester,
+  delete_semester,
+  put_semester,
 } from "@/api";
-import AdminNavBar from "@/components/admin/AdminNavBar.vue";
-import { useRouter } from "vue-router";
 import AdminTemplate from "@/components/admin/AdminTemplate.vue";
 
 //add
@@ -123,25 +104,20 @@ const addDialogFormVisible = ref(false);
 const addFormRef = ref();
 const addForm = reactive({
   name: "",
-  address: "",
-  phone: "",
 });
 const formRules = reactive({
-  name: [{ required: true, message: "请输入学院名称", trigger: "blur" }],
-  address: [{ required: true, message: "请输入地址信息", trigger: "blur" }],
-  phone: [{ required: true, message: "请输入联系方式", trigger: "blur" }],
+  name: [{ required: true, message: "请输入学期名称", trigger: "blur" }],
 });
 const modifyDialogFormVisible = ref(false);
 const modifyFormRef = ref();
 const modifyForm = reactive({
+  semester_id: "",
   name: "",
-  address: "",
-  phone: "",
 });
 
 // table
-const departments = ref();
-const slicedDepartments = ref();
+const semesters = ref();
+const slicedSemesters = ref();
 const nowSelectedRowData = ref();
 // pagination
 const nowSelectedPage = ref(1);
@@ -150,50 +126,54 @@ const totalPage = ref(0);
 // loading
 const loading = ref();
 // axios
-const getDepartmentList = async () => {
+const getSemesterList = async () => {
   openLoading();
-  const result = await get_department_list();
+  const result = await get_semester_list();
   totalPage.value = result.data.length;
   if (result.status === 200) {
-    departments.value = result.data;
+    semesters.value = result.data;
   }
   closeLoading();
 };
-const sliceDepartmentList = () => {
-  slicedDepartments.value = departments.value.slice(
+
+const sliceSemesterList = () => {
+  slicedSemesters.value = semesters.value.slice(
     pageSize.value * (nowSelectedPage.value - 1),
     pageSize.value * nowSelectedPage.value
   );
 };
-const postClass = async () => {
+
+const sliceSemester = async () => {
   openLoading();
-  await post_department(addForm);
+  await post_semester(addForm);
   await refreshTable();
   closeLoading();
 };
 
-const deleteClass = async () => {
+const deleteSemester = async () => {
   openLoading();
-  await delete_department(nowSelectedRowData.value.dept_id);
+  await delete_semester(nowSelectedRowData.value.semester_id);
   await refreshTable();
   closeLoading();
 };
-const putClass = async () => {
+
+const putSemester = async () => {
   openLoading();
-  await put_department(nowSelectedRowData.value.dept_id, modifyForm);
+  await put_semester(nowSelectedRowData.value.semester_id, modifyForm);
   await refreshTable();
   closeLoading();
 };
-// table contents
 
 // mouse events
 const pageChange = (param) => {
   nowSelectedPage.value = param;
-  sliceDepartmentList();
+  sliceSemesterList();
 };
+
 const handleSelectedRow = (param) => {
   nowSelectedRowData.value = param;
 };
+
 const handleModifyClick = () => {
   if (!nowSelectedRowData.value) {
     ElMessage({
@@ -206,6 +186,7 @@ const handleModifyClick = () => {
     refreshModifyForm();
   }
 };
+
 const handleDeleteClick = () => {
   if (!nowSelectedRowData.value) {
     ElMessage({
@@ -216,31 +197,36 @@ const handleDeleteClick = () => {
     handleDelete();
   }
 };
-const refreshDialogData = () => {};
+
+const refreshDialogData = () => {
+  getSemesterList();
+};
+
 const refreshModifyForm = () => {
   modifyForm.name = nowSelectedRowData.value.name;
-  modifyForm.address = nowSelectedRowData.value.address;
-  modifyForm.phone = nowSelectedRowData.value.phone;
 };
+
 const resetForm = (formEl) => formEl.resetFields();
+
 const handleAdd = async (formEl) => {
   await formEl.validate((valid) => {
     if (valid) {
-      postClass();
+      sliceSemester();
       ElMessage({
         type: "success",
-        message: "新增学院成功",
+        message: "新增学期成功",
       });
       addDialogFormVisible.value = false;
       resetForm(formEl);
     } else {
       ElMessage({
         type: "error",
-        message: "请填写完整的学院信息",
+        message: "请填写完整的学期信息",
       });
     }
   });
 };
+
 const handleDelete = () => {
   // 确认框
   ElMessageBox.confirm("是否删除当前选中行记录?", "", {
@@ -249,7 +235,7 @@ const handleDelete = () => {
     type: "warning",
   })
     .then(() => {
-      deleteClass();
+      deleteSemester();
       ElMessage({
         type: "success",
         message: "删除操作成功",
@@ -262,28 +248,29 @@ const handleDelete = () => {
       });
     });
 };
+
 const handleModify = async (formEl) => {
   await formEl.validate((valid) => {
     if (valid) {
-      putClass();
+      putSemester();
       ElMessage({
         type: "success",
-        message: "修改学院成功",
+        message: "修改学期成功",
       });
       modifyDialogFormVisible.value = false;
     } else {
       ElMessage({
         type: "error",
-        message: "请填写完整的学院信息",
+        message: "请填写完整的学期信息",
       });
     }
   });
 };
 
 const refreshTable = async () => {
-  await getDepartmentList();
+  await getSemesterList();
   nowSelectedPage.value = 1;
-  sliceDepartmentList();
+  sliceSemesterList();
 };
 
 // loading
@@ -294,6 +281,7 @@ const openLoading = () => {
     background: "rgba(0,0,0,0.5)",
   });
 };
+
 const closeLoading = () => {
   loading.value.close();
 };

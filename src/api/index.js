@@ -92,17 +92,38 @@ export const post_course = (data) =>
     data: data,
   });
 
+// Semester
+export const get_semester_list = () =>
+  requests({
+    url: `/semester/`,
+    method: "get",
+  });
+export const put_semester = (semester_id, data) =>
+  requests({
+    url: `/semester/${semester_id}/`,
+    method: "put",
+    data: data,
+  });
+export const delete_semester = (semester_id) =>
+  requests({
+    url: `/semester/${semester_id}/`,
+    method: "delete",
+  });
+export const post_semester = (data) =>
+  requests({
+    url: `/semester/`,
+    method: "post",
+    data: data,
+  });
+
+// Divider
+
 export const get_teacher_list = () =>
   requests({
     url: `/teacher/`,
     method: "get",
   });
 
-export const get_semester_list = () =>
-  requests({
-    url: `/semester/`,
-    method: "get",
-  });
 export const get_course_selection_list = () =>
   requests({
     url: `/course_selection/`,
