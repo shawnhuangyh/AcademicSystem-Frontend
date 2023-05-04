@@ -287,11 +287,11 @@
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { ElMessageBox, ElMessage, ElLoading } from "element-plus";
 import {
-  get_class_List,
+  get_class_list,
   delete_class,
   get_teacher_list,
-  get_course_ist,
-  get_semester_ist,
+  get_course_list,
+  get_semester_list,
   post_class,
   put_class,
 } from "@/api";
@@ -355,13 +355,12 @@ const nowSelectedRowData = ref();
 const nowSelectedPage = ref(1);
 const pageSize = ref(10);
 const totalPage = ref(0);
-const paginationShow = ref(true);
 // loading
 const loading = ref();
 // axios
 const getClassList = async () => {
   openLoading();
-  const result = await get_class_List(searchForm);
+  const result = await get_class_list(searchForm);
   totalPage.value = result.data.length;
   if (result.status === 200) {
     classes.value = result.data;
@@ -387,13 +386,13 @@ const getTeacherList = async () => {
   }
 };
 const getCourseList = async () => {
-  const result = await get_course_ist();
+  const result = await get_course_list();
   if (result.status === 200) {
     courses.value = result.data;
   }
 };
 const getSemesterList = async () => {
-  const result = await get_semester_ist();
+  const result = await get_semester_list();
   if (result.status === 200) {
     semesters.value = result.data;
   }

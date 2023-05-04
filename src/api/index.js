@@ -1,9 +1,26 @@
 import requests from "@/api/request";
 
-export const departmentList = () =>
+export const get_department_list = () =>
   requests({
     url: `/department/`,
     method: "get",
+  });
+export const post_department = (data) =>
+  requests({
+    url: `/department/`,
+    method: "post",
+    data: data,
+  });
+export const delete_department = (dept_id) =>
+  requests({
+    url: `/department/${dept_id}/`,
+    method: "delete",
+  });
+export const put_department = (dept_id, data) =>
+  requests({
+    url: `/department/${dept_id}/`,
+    method: "put",
+    data: data,
   });
 
 export const get_teacher_list = () =>
@@ -12,19 +29,19 @@ export const get_teacher_list = () =>
     method: "get",
   });
 
-export const get_course_ist = () =>
+export const get_course_list = () =>
   requests({
     url: `/course/`,
     method: "get",
   });
 
-export const get_class_List = (data) =>
+export const get_class_list = (data) =>
   requests({
     url: `/class/`,
     method: "get",
     params: data,
   });
-export const get_semester_ist = () =>
+export const get_semester_list = () =>
   requests({
     url: `/semester/`,
     method: "get",
