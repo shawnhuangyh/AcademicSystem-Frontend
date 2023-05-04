@@ -80,3 +80,10 @@ export const get_user_role = () =>
     url: `/user/role/`,
     method: "get",
   });
+
+export const change_password = (data, username) =>
+  requests({
+    url: `/user/${username}/`,
+    method: "put",
+    data: data,
+  });

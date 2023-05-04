@@ -1,6 +1,8 @@
 <template>
   <el-container>
-    <el-header>Header</el-header>
+    <el-header>
+      <my-header />
+    </el-header>
     <el-container>
       <el-aside class="nav-bar">
         <admin-nav-bar />
@@ -14,13 +16,13 @@
 
 <script setup>
 import AdminNavBar from "@/components/admin/AdminNavBar.vue";
+import MyHeader from "@/components/UI/Header.vue";
 </script>
 
 <style scoped>
 .el-header {
   background-color: #b3c0d1;
   color: #333;
-  line-height: 60px;
 }
 
 .nav-bar {

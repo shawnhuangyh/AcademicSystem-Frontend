@@ -17,7 +17,7 @@
 import { reactive, ref } from "vue";
 import { ElForm, ElFormItem, ElInput, ElButton, ElMessage } from "element-plus";
 import { get_user_role, user_login } from "@/api";
-import { setToken } from "@/utils/token";
+import { getRole, setRole, setToken } from "@/utils/token";
 import { router } from "@/router";
 import { AxiosError } from "axios";
 
@@ -35,15 +35,21 @@ const login = async () => {
   const result = await user_login(loginForm);
   if (!(result instanceof AxiosError)) {
     setToken(result.data.access);
-    ElMessage.success("登录成功");
     const role = await get_user_role();
-    if (role.data["is_superuser"] === true) {
-      // 进入管理员后台
-      await router.push("/admin/class");
-    } else if (role.data["is_staff"] === true) {
-      // 进入教师后台
-    } else {
-      // 进入学生后台
+    setRole(role);
+    if (!(role instanceof AxiosError)) {
+      ElMessage.success("登录成功");
+      switch (getRole()) {
+        case "ADMIN":
+          await router.push("/admin/class");
+          break;
+        case "TEACHER":
+          await router.push("/teacher");
+          break;
+        case "STUDENT":
+          await router.push("/student");
+          break;
+      }
     }
   }
 };
