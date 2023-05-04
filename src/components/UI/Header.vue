@@ -78,20 +78,13 @@ const resetForm = (formEl) => {
 const submitForm = async (formEl) => {
   await formEl.validate((valid) => {
     if (valid) {
-      if (userForm.new_password === userForm.new_password_repeat) {
-        userForm_send.password = userForm.new_password;
-        change_password(userForm_send, getUser());
-        ElMessage({
-          type: "success",
-          message: "密码修改成功！",
-        });
-        resetForm(formEl);
-      } else {
-        ElMessage({
-          type: "error",
-          message: "密码输入不一致！",
-        });
-      }
+      userForm_send.password = userForm.new_password;
+      change_password(userForm_send, getUser());
+      ElMessage({
+        type: "success",
+        message: "密码修改成功！",
+      });
+      resetForm(formEl);
     } else {
       ElMessage({
         type: "error",

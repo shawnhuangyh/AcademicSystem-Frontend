@@ -2,25 +2,15 @@
   <admin-template>
     <div>
       <div class="button-box">
-        <el-col :span="2">
-          <div class="buttons-box">
-            <el-row class="button-box">
-              <el-button
-                @click="
-                  addDialogFormVisible = true;
-                  refreshDialogData();
-                "
-                >增加
-              </el-button>
-            </el-row>
-            <el-row class="button-box">
-              <el-button @click="handleDeleteClick">删除</el-button>
-            </el-row>
-            <el-row class="button-box">
-              <el-button @click="handleModifyClick">修改</el-button>
-            </el-row>
-          </div>
-        </el-col>
+        <el-button
+          @click="
+            addDialogFormVisible = true;
+            refreshDialogData();
+          "
+          >增加
+        </el-button>
+        <el-button @click="handleDeleteClick">删除</el-button>
+        <el-button @click="handleModifyClick">修改</el-button>
       </div>
       <div class="table-box">
         <el-table

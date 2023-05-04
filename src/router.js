@@ -4,6 +4,7 @@ import { ElMessage } from "element-plus";
 import Login from "@/components/Login.vue";
 import Class from "@/components/admin/Class.vue";
 import Department from "@/components/admin/Department.vue";
+import Course from "@/components/admin/Course.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -17,6 +18,11 @@ const router = createRouter({
       path: "/admin/class",
       name: "Class",
       component: Class,
+    },
+    {
+      path: "/admin/course",
+      name: "Course",
+      component: Course,
     },
     {
       path: "/admin/department",
