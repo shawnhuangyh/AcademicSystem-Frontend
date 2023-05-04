@@ -6,6 +6,8 @@ import Class from "@/components/admin/Class.vue";
 import Department from "@/components/admin/Department.vue";
 import Course from "@/components/admin/Course.vue";
 import Semester from "@/components/admin/Semester.vue";
+import Student from "@/components/admin/Student.vue";
+import Teacher from "@/components/admin/Teacher.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -29,6 +31,16 @@ const router = createRouter({
       path: "/admin/semester",
       name: "Semester",
       component: Semester,
+    },
+    {
+      path: "/admin/student",
+      name: "Student",
+      component: Student,
+    },
+    {
+      path: "/admin/teacher",
+      name: "Teacher",
+      component: Teacher,
     },
     {
       path: "/admin/department",

@@ -116,6 +116,30 @@ export const post_semester = (data) =>
     data: data,
   });
 
+// Student
+export const get_student_list = () =>
+  requests({
+    url: `/student/`,
+    method: "get",
+  });
+export const put_student = (data) =>
+  requests({
+    url: `/student/${data.student_id}/`,
+    method: "put",
+    data: data,
+  });
+export const delete_student = (student_id) =>
+  requests({
+    url: `/student/${student_id}/`,
+    method: "delete",
+  });
+export const post_student = (data) =>
+  requests({
+    url: `/student/`,
+    method: "post",
+    data: data,
+  });
+
 // Divider
 
 export const get_teacher_list = () =>
