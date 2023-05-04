@@ -140,13 +140,31 @@ export const post_student = (data) =>
     data: data,
   });
 
-// Divider
-
+// Teacher
 export const get_teacher_list = () =>
   requests({
     url: `/teacher/`,
     method: "get",
   });
+export const put_teacher = (data) =>
+  requests({
+    url: `/teacher/${data.teacher_id}/`,
+    method: "put",
+    data: data,
+  });
+export const delete_teacher = (teacher_id) =>
+  requests({
+    url: `/teacher/${teacher_id}/`,
+    method: "delete",
+  });
+export const post_teacher = (data) =>
+  requests({
+    url: `/teacher/`,
+    method: "post",
+    data: data,
+  });
+
+// Divider
 
 export const get_course_selection_list = () =>
   requests({
