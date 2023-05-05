@@ -201,5 +201,5 @@ export const delete_student_course_selection = (data) =>
   requests({
     url: `/course_selection/drop/`,
     method: "post",
-    params: data,
+    data: data,
   });

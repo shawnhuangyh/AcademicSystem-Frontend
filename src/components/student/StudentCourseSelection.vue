@@ -198,7 +198,6 @@ const times = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
 // table
 const classes = ref();
 const slicedClasses = ref();
-const nowSelectedRowDataClasses = ref();
 const selectedCourses = ref();
 const slicedSelectedCourses = ref();
 const nowSelectedRowData = ref();
@@ -250,9 +249,11 @@ const getSemesterList = async () => {
 };
 const deleteSelectedCourse = async () => {
   openLoading();
-  await delete_student_course_selection(
-    nowSelectedRowData.value.course_selection_id
-  );
+  const temp = {
+    student_id: nowSelectedRowData.value.student.student_id,
+    class_id: nowSelectedRowData.value.class_field.class_id,
+  };
+  await delete_student_course_selection(temp);
   await refreshTable();
   closeLoading();
 };
