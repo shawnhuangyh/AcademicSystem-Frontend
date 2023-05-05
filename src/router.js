@@ -11,6 +11,8 @@ import Teacher from "@/components/admin/Teacher.vue";
 import Department from "@/components/admin/Department.vue";
 import StudentCourseSelection from "@/components/student/StudentCourseSelection.vue";
 import StudentCourse from "@/components/student/StudentCourse.vue";
+import TeacherCourse from "@/components/teacher/TeacherClass.vue";
+import TeacherScore from "@/components/teacher/TeacherScore.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -55,6 +57,14 @@ const router = createRouter({
       path: "/student/course",
       component: StudentCourse,
     },
+    {
+      path: "/teacher/class",
+      component: TeacherCourse,
+    },
+    {
+      path: "/teacher/score",
+      component: TeacherScore,
+    },
   ],
 });
 
@@ -71,7 +81,7 @@ router.beforeEach(async (to, from, next) => {
         index = "/student/select";
         break;
       case "TEACHER":
-        index = "/teacher";
+        index = "/teacher/class";
         break;
     }
     // 前往登陆界面
