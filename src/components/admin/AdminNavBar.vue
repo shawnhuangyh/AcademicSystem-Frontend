@@ -12,15 +12,15 @@
       </template>
       <el-menu-item index="/admin/class">班级管理</el-menu-item>
       <el-menu-item index="/admin/course">课程管理</el-menu-item>
-      <el-menu-item index="semester">学期管理</el-menu-item>
-      <el-menu-item index="course_selection">选课管理</el-menu-item>
+      <el-menu-item index="/admin/semester">学期管理</el-menu-item>
+      <el-menu-item index="/admin/course_selection">选课管理</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="1">
       <template #title>
         <span>用户管理</span>
       </template>
-      <el-menu-item index="student">学生管理</el-menu-item>
-      <el-menu-item index="teacher">教师管理</el-menu-item>
+      <el-menu-item index="/admin/student">学生管理</el-menu-item>
+      <el-menu-item index="/admin/teacher">教师管理</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="2">
       <template #title>

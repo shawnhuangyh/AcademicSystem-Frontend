@@ -164,10 +164,27 @@ export const post_teacher = (data) =>
     data: data,
   });
 
-// Divider
-
-export const get_course_selection_list = () =>
+// Course Selection
+export const get_course_selection_list = (data) =>
   requests({
     url: `/course_selection/`,
     method: "get",
+    params: data,
+  });
+export const put_course_selection = (course_selection_id, data) =>
+  requests({
+    url: `/course_selection/${course_selection_id}/`,
+    method: "put",
+    data: data,
+  });
+export const delete_course_selection = (course_selection_id) =>
+  requests({
+    url: `/course_selection/${course_selection_id}/`,
+    method: "delete",
+  });
+export const post_course_selection = (data) =>
+  requests({
+    url: `/course_selection/`,
+    method: "post",
+    data: data,
   });

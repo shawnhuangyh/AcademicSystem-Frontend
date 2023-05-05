@@ -3,53 +3,50 @@ import { getRole, getToken, getUser, rmToken } from "@/utils/token";
 import { ElMessage } from "element-plus";
 import Login from "@/components/Login.vue";
 import Class from "@/components/admin/Class.vue";
-import Department from "@/components/admin/Department.vue";
 import Course from "@/components/admin/Course.vue";
 import Semester from "@/components/admin/Semester.vue";
+import CourseSelection from "@/components/admin/CourseSelection.vue";
 import Student from "@/components/admin/Student.vue";
 import Teacher from "@/components/admin/Teacher.vue";
+import Department from "@/components/admin/Department.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: "/",
-      name: "Login",
       component: Login,
     },
     {
       path: "/admin/class",
-      name: "Class",
       component: Class,
     },
     {
       path: "/admin/course",
-      name: "Course",
       component: Course,
     },
     {
       path: "/admin/semester",
-      name: "Semester",
       component: Semester,
     },
     {
+      path: "/admin/course_selection",
+      component: CourseSelection,
+    },
+    {
       path: "/admin/student",
-      name: "Student",
       component: Student,
     },
     {
       path: "/admin/teacher",
-      name: "Teacher",
       component: Teacher,
     },
     {
       path: "/admin/department",
-      name: "Department",
       component: Department,
     },
     {
       path: "/student",
-      name: "Department",
       component: Department,
     },
   ],
