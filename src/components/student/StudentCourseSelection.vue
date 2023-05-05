@@ -4,7 +4,10 @@
       <div class="buttons-box">
         <el-select
           v-model="searchFormSelect.semester__semester_id"
-          @change="refreshTable"
+          @change="
+            changeSemester($event);
+            refreshTable();
+          "
         >
           <el-option
             v-for="semester in semesters"
@@ -12,13 +15,8 @@
             :value="semester.semester_id"
           />
         </el-select>
-        <el-button
-          style="margin: 15px"
-          @click="
-            addDialogFormVisible = true;
-            refreshDialogData();
-          "
-          >增加
+        <el-button style="margin: 15px" @click="handleAddClick"
+          >选课
         </el-button>
       </div>
 
@@ -29,13 +27,13 @@
               <el-form
                 label-position="left"
                 label-width="30%"
-                :model="searchForm"
+                :model="searchFormSelect"
               >
                 <el-row :gutter="20" justify="center">
                   <el-col :span="12">
                     <el-form-item label="课程号">
                       <el-input
-                        v-model="searchForm.course__course_id__icontains"
+                        v-model="searchFormSelect.course__course_id__icontains"
                         @focusout="refreshTable"
                       />
                     </el-form-item>
@@ -43,7 +41,7 @@
                   <el-col :span="12">
                     <el-form-item label="课程名称">
                       <el-input
-                        v-model="searchForm.course__name__icontains"
+                        v-model="searchFormSelect.course__name__icontains"
                         @focusout="refreshTable"
                       />
                     </el-form-item>
@@ -53,7 +51,7 @@
                   <el-col :span="12">
                     <el-form-item label="教师姓名">
                       <el-input
-                        v-model="searchForm.teacher__name__icontains"
+                        v-model="searchFormSelect.teacher__name__icontains"
                         @focusout="refreshTable"
                       />
                     </el-form-item>
@@ -61,7 +59,7 @@
                   <el-col :span="12">
                     <el-form-item label="容量剩余">
                       <el-input
-                        v-model="searchForm.remaining_selection__gte"
+                        v-model="searchFormSelect.remaining_selection__gte"
                         @focusout="refreshTable"
                       />
                     </el-form-item>
@@ -81,13 +79,13 @@
           style="width: 100%"
           :header-cell-style="{ 'text-align': 'center' }"
           :cell-style="{ 'text-align': 'center' }"
-          @row-click="handleSelectedRow"
+          @row-click="handleSelectedRowSelect"
         >
           <el-table-column prop="course.course_id" label="课程号" />
           <el-table-column prop="course.name" label="课程名称" />
           <el-table-column prop="course.credit" label="学分" />
           <el-table-column prop="teacher.name" label="教师姓名" />
-          <el-table-column :formatter="timeFormatter" label="上课时间" />
+          <el-table-column :formatter="timeFormatterSelect" label="上课时间" />
           <el-table-column prop="classroom" label="上课地点" />
           <el-table-column prop="max_selection" label="容量" />
           <el-table-column prop="current_selection" label="人数" />
@@ -100,15 +98,21 @@
           layout="prev, pager, next"
           :total="totalPage"
           :page-size="pageSize"
-          @current-change="pageChange"
-          :current-page="nowSelectedPage"
+          @current-change="pageChangeSelect"
+          :current-page="nowSelectedPageSelect"
         />
       </div>
     </div>
 
     <div>
       <div class="buttons-box">
-        <el-select v-model="searchForm.semester_id" @change="refreshTable">
+        <el-select
+          v-model="searchForm.semester_id"
+          @change="
+            changeSemester($event);
+            refreshTable();
+          "
+        >
           <el-option
             v-for="semester in semesters"
             :label="semester.name"
@@ -175,6 +179,7 @@ import { useRouter } from "vue-router";
 import StudentTemplate from "@/components/student/StudentTemplate.vue";
 
 // search
+const selectedSemester = ref(1);
 const semesters = ref();
 // search
 const searchForm = reactive({
@@ -197,7 +202,9 @@ const nowSelectedRowDataClasses = ref();
 const selectedCourses = ref();
 const slicedSelectedCourses = ref();
 const nowSelectedRowData = ref();
+const nowSelectedRowDataSelect = ref();
 // pagination
+const nowSelectedPageSelect = ref(1);
 const nowSelectedPage = ref(1);
 const pageSize = ref(10);
 const totalPage = ref(0);
@@ -206,6 +213,7 @@ const loading = ref();
 // axios
 const getClassList = async () => {
   openLoading();
+  console.log(searchFormSelect.semester__semester_id);
   const result = await get_class_list(searchFormSelect);
   totalPage.value = result.data.length;
   if (result.status === 200) {
@@ -215,8 +223,8 @@ const getClassList = async () => {
 };
 const sliceClassList = () => {
   slicedClasses.value = classes.value.slice(
-    pageSize.value * (nowSelectedPage.value - 1),
-    pageSize.value * nowSelectedPage.value
+    pageSize.value * (nowSelectedPageSelect.value - 1),
+    pageSize.value * nowSelectedPageSelect.value
   );
 };
 const getStudentCourseSelectionList = async () => {
@@ -249,6 +257,10 @@ const deleteSelectedCourse = async () => {
   closeLoading();
 };
 // table contents
+
+const timeFormatterSelect = (row, col) => {
+  return row.time + row.start + "-" + row.end;
+};
 const timeFormatter = (row, col) => {
   return (
     row.class_field.time + row.class_field.start + "-" + row.class_field.end
@@ -256,13 +268,31 @@ const timeFormatter = (row, col) => {
 };
 
 // mouse events
+const pageChangeSelect = (param) => {
+  nowSelectedPageSelect.value = param;
+  sliceClassList();
+};
 const pageChange = (param) => {
   nowSelectedPage.value = param;
   sliceStudentCourseSelectionList();
 };
+const handleSelectedRowSelect = (param) => {
+  nowSelectedRowDataSelect.value = param;
+  console.log(nowSelectedRowDataSelect.value);
+};
 const handleSelectedRow = (param) => {
   nowSelectedRowData.value = param;
   console.log(nowSelectedRowData.value);
+};
+const handleAddClick = () => {
+  if (!nowSelectedRowDataSelect.value) {
+    ElMessage({
+      type: "error",
+      message: "未选中行",
+    });
+  } else {
+    handleDelete();
+  }
 };
 const handleDeleteClick = () => {
   if (!nowSelectedRowData.value) {
@@ -295,13 +325,19 @@ const handleDelete = () => {
       });
     });
 };
-const refreshTable = async (param) => {
-  searchForm.semester_id = param;
-  searchFormSelect.semester__semester_id = param;
+
+const changeSemester = (param) => {
+  selectedSemester.value = param;
+};
+const refreshTable = async () => {
+  searchForm.semester_id = selectedSemester.value;
+  searchFormSelect.semester__semester_id = selectedSemester.value;
   await getClassList();
   await getStudentCourseSelectionList();
   nowSelectedPage.value = 1;
+  nowSelectedPageSelect.value = 1;
   sliceStudentCourseSelectionList();
+  sliceClassList();
 };
 
 // loading
