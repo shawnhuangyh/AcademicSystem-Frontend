@@ -9,6 +9,8 @@ import CourseSelection from "@/components/admin/CourseSelection.vue";
 import Student from "@/components/admin/Student.vue";
 import Teacher from "@/components/admin/Teacher.vue";
 import Department from "@/components/admin/Department.vue";
+import StudentCourseSelection from "@/components/student/StudentCourseSelection.vue";
+import StudentCourse from "@/components/student/StudentCourse.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -46,8 +48,12 @@ const router = createRouter({
       component: Department,
     },
     {
-      path: "/student",
-      component: Department,
+      path: "/student/select",
+      component: StudentCourseSelection,
+    },
+    {
+      path: "/student/course",
+      component: StudentCourse,
     },
   ],
 });
@@ -62,7 +68,7 @@ router.beforeEach(async (to, from, next) => {
         index = "/admin/course";
         break;
       case "STUDENT":
-        index = "/student";
+        index = "/student/select";
         break;
       case "TEACHER":
         index = "/teacher";

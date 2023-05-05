@@ -47,7 +47,7 @@ const login = async () => {
           await router.push("/teacher");
           break;
         case "STUDENT":
-          await router.push("/student");
+          await router.push("/student/select");
           break;
       }
     }

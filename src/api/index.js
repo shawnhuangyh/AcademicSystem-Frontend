@@ -188,3 +188,18 @@ export const post_course_selection = (data) =>
     method: "post",
     data: data,
   });
+
+// Student  Course
+export const get_student_course_selection_list = (data) =>
+  requests({
+    url: `/course_selection/info/`,
+    method: "post",
+    data: data,
+  });
+
+export const delete_student_course_selection = (data) =>
+  requests({
+    url: `/course_selection/drop/`,
+    method: "post",
+    params: data,
+  });
