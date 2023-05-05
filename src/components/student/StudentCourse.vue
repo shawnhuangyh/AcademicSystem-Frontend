@@ -2,7 +2,7 @@
   <student-template>
     <!--      课表-->
     <div>
-      <div classs="content">
+      <div class="content">
         <div class="class-table">
           <div class="table-wrapper">
             <div class="tabel-container">
@@ -538,8 +538,8 @@ tr,
 th,
 td {
   width: 150px;
-  height: 104px;
-  font-size: 12px;
+  height: 80px;
+  font-size: 10px;
   text-align: center;
   border: 1px solid #f3f3f3;
 }
@@ -556,10 +556,13 @@ td:hover {
   background-color: #fff;
 }
 .amtdstyle:hover {
-  background-color: #e7f7f4;
+  background: #fce6bc;
 }
 .pmtdstyle:hover {
-  background-color: #fce6bc;
+  background: #f7e7f6;
+}
+.nitdstyle:hover {
+  background: #bcd6fc;
 }
 .fw {
   font-size: 16px;
@@ -579,13 +582,14 @@ td:hover {
   font-weight: 600;
 }
 .amtdstyle {
-  background: #e7f7f4;
-  color: #2e8759;
+  background: #fce6bc;
+  color: #ff7844;
+
   border-right: 0;
 }
 .pmtdstyle {
-  background: #fce6bc;
-  color: #ff7844;
+  background: #f7e7f6;
+  color: #442e87;
   border-right: 0;
 }
 .nitdstyle {
@@ -598,5 +602,8 @@ td:hover {
   height: 38px;
   background: #00c15d;
   border-radius: 8px;
+}
+td {
+  height: 50px;
 }
 </style>
