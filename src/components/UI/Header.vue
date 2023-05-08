@@ -1,7 +1,13 @@
 <script setup>
 import { computed, reactive, ref } from "vue";
 import { router } from "@/router";
-import { getRole, getUser, rmToken } from "@/utils/token";
+import {
+  getRole,
+  getUser,
+  getUserGPA,
+  getUserName,
+  rmToken,
+} from "@/utils/token";
 import { ElMessage } from "element-plus";
 import { change_password } from "@/api";
 
@@ -21,6 +27,10 @@ const userForm_send = reactive({
 
 const username = computed(() => {
   return getUser();
+});
+
+const name = computed(() => {
+  return getUserName();
 });
 
 const role = computed(() => {
@@ -101,19 +111,45 @@ const submitForm = async (formEl) => {
       <div style="line-height: 60px">{{ role }}</div>
     </el-col>
     <el-col :span="20">
-      <div style="text-align: right; font-size: 12px; padding: 20px">
-        <el-dropdown trigger="click" @command="handleCommand">
-          <span class="el-dropdown-link">
-            {{ username }}
-            <font-awesome-icon :icon="['fas', 'gear']" />
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="setting">设置</el-dropdown-item>
-              <el-dropdown-item command="exit">退出</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+      <el-row v-if="getRole() === 'STUDENT'">
+        <el-col :span="21">
+          <div style="text-align: right; font-size: 12px; padding: 20px">
+            平均绩点: {{ getUserGPA() }}
+          </div>
+        </el-col>
+        <el-col :span="3">
+          <div style="text-align: right; font-size: 12px; padding: 20px">
+            <el-dropdown trigger="click" @command="handleCommand">
+              <span class="el-dropdown-link">
+                {{ name }}
+                <font-awesome-icon :icon="['fas', 'gear']" />
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="setting">设置</el-dropdown-item>
+                  <el-dropdown-item command="exit">退出</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+        </el-col>
+      </el-row>
+
+      <div v-else>
+        <div style="text-align: right; font-size: 12px; padding: 20px">
+          <el-dropdown trigger="click" @command="handleCommand">
+            <span class="el-dropdown-link">
+              {{ name }}
+              <font-awesome-icon :icon="['fas', 'gear']" />
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="setting">设置</el-dropdown-item>
+                <el-dropdown-item command="exit">退出</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
       </div>
     </el-col>
   </el-row>

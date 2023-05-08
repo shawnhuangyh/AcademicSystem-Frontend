@@ -163,6 +163,11 @@ export const post_teacher = (data) =>
     method: "post",
     data: data,
   });
+export const get_teacher_info = () =>
+  requests({
+    url: `/teacher/info/`,
+    method: "get",
+  });
 
 // Course Selection
 export const get_course_selection_list = (data) =>

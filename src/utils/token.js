@@ -2,6 +2,14 @@ export const setToken = (token) => {
   localStorage.setItem("TOKEN", token);
 };
 
+export const setUserName = (username) => {
+  localStorage.setItem("NAME", username);
+};
+
+export const setUserGPA = (gpa) => {
+  localStorage.setItem("GPA", gpa);
+};
+
 export const setRole = (role) => {
   if (role.data["is_superuser"] === true) {
     localStorage.setItem("ROLE", "ADMIN");
@@ -19,6 +27,14 @@ export const getToken = () => {
 
 export const getUser = () => {
   return localStorage.getItem("USER");
+};
+
+export const getUserName = () => {
+  return localStorage.getItem("NAME");
+};
+
+export const getUserGPA = () => {
+  return localStorage.getItem("GPA");
 };
 
 export const getRole = () => {

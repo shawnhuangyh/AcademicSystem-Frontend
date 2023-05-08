@@ -16,8 +16,20 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { ElForm, ElFormItem, ElInput, ElButton, ElMessage } from "element-plus";
-import { get_user_role, user_login } from "@/api";
-import { getRole, setRole, setToken } from "@/utils/token";
+import {
+  get_teacher_info,
+  get_user_info,
+  get_user_role,
+  user_login,
+} from "@/api";
+import {
+  getRole,
+  getUser,
+  setRole,
+  setToken,
+  setUserGPA,
+  setUserName,
+} from "@/utils/token";
 import { router } from "@/router";
 import { AxiosError } from "axios";
 
@@ -37,6 +49,22 @@ const login = async () => {
     setToken(result.data.access);
     const role = await get_user_role();
     setRole(role);
+    let userName;
+    switch (getRole()) {
+      case "ADMIN":
+        setUserName(role.data.username);
+        break;
+      case "TEACHER":
+        userName = await get_teacher_info();
+        setUserName(userName.data.name);
+        break;
+      case "STUDENT":
+        userName = await get_user_info();
+        let gpa = Number(userName.data.gpa).toFixed(3);
+        setUserName(userName.data.name);
+        setUserGPA(gpa);
+        break;
+    }
     if (!(role instanceof AxiosError)) {
       ElMessage.success("登录成功");
       switch (getRole()) {
