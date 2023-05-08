@@ -8,10 +8,11 @@
   >
     <el-sub-menu index="0">
       <template #title>
-        <span>教学管理</span>
+        <span>常用功能</span>
       </template>
       <el-menu-item index="/student/select">选课管理</el-menu-item>
-      <el-menu-item index="/student/course">课程管理</el-menu-item>
+      <el-menu-item index="/student/drop">退课管理</el-menu-item>
+      <el-menu-item index="/student/course">查看课程</el-menu-item>
     </el-sub-menu>
   </el-menu>
 </template>

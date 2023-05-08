@@ -3,7 +3,7 @@
     <div>
       <div class="buttons-box">
         <el-select
-          v-model="searchFormSelect.semester__semester_id"
+          v-model="searchForm.semester_id"
           @change="
             changeSemester($event);
             refreshTable();
@@ -15,80 +15,31 @@
             :value="semester.semester_id"
           />
         </el-select>
-        <el-button style="margin: 15px" @click="handleAddClick"
-          >选课
-        </el-button>
-      </div>
-
-      <div class="form-buttons-box">
-        <el-row>
-          <el-col :span="22">
-            <div class="form-box">
-              <el-form
-                label-position="left"
-                label-width="30%"
-                :model="searchFormSelect"
-              >
-                <el-row :gutter="20" justify="center">
-                  <el-col :span="12">
-                    <el-form-item label="课程号">
-                      <el-input
-                        v-model="searchFormSelect.course__course_id__icontains"
-                        @focusout="refreshTable"
-                      />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="课程名称">
-                      <el-input
-                        v-model="searchFormSelect.course__name__icontains"
-                        @focusout="refreshTable"
-                      />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row :gutter="20" justify="center">
-                  <el-col :span="12">
-                    <el-form-item label="教师姓名">
-                      <el-input
-                        v-model="searchFormSelect.teacher__name__icontains"
-                        @focusout="refreshTable"
-                      />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="容量剩余">
-                      <el-input
-                        v-model="searchFormSelect.remaining_selection__gte"
-                        @focusout="refreshTable"
-                      />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-form>
-            </div>
-          </el-col>
-        </el-row>
+        <el-button style="margin: 15px" @click="handleDeleteClick"
+          >退课</el-button
+        >
       </div>
 
       <div class="table-box">
         <el-table
-          :data="slicedClasses"
+          :data="slicedSelectedCourses"
           stripe
           highlight-current-row
           style="width: 100%"
           :header-cell-style="{ 'text-align': 'center' }"
           :cell-style="{ 'text-align': 'center' }"
-          @row-click="handleSelectedRowSelect"
+          @row-click="handleSelectedRow"
         >
-          <el-table-column prop="course.course_id" label="课程号" />
-          <el-table-column prop="course.name" label="课程名称" />
-          <el-table-column prop="course.credit" label="学分" />
-          <el-table-column prop="teacher.name" label="教师姓名" />
-          <el-table-column :formatter="timeFormatterSelect" label="上课时间" />
-          <el-table-column prop="classroom" label="上课地点" />
-          <el-table-column prop="max_selection" label="容量" />
-          <el-table-column prop="current_selection" label="人数" />
+          <el-table-column prop="class_field.course.course_id" label="课程号" />
+          <el-table-column prop="class_field.course.name" label="课程名称" />
+          <el-table-column prop="class_field.course.credit" label="学分" />
+          <el-table-column prop="class_field.teacher.name" label="教师姓名" />
+          <el-table-column :formatter="timeFormatter" label="上课时间" />
+          <el-table-column prop="class_field.classroom" label="上课地点" />
+          <el-table-column prop="class_field.max_selection" label="容量" />
+          <el-table-column prop="class_field.current_selection" label="人数" />
+          <!--          <el-table-column prop="grade" label="综合成绩" />-->
+          <!--          <el-table-column prop="gpa" label="绩点" />-->
         </el-table>
       </div>
 
@@ -98,8 +49,8 @@
           layout="prev, pager, next"
           :total="totalPage"
           :page-size="pageSize"
-          @current-change="pageChangeSelect"
-          :current-page="nowSelectedPageSelect"
+          @current-change="pageChange"
+          :current-page="nowSelectedPage"
         />
       </div>
     </div>
@@ -160,14 +111,11 @@ const loading = ref();
 const userInfo = ref();
 // axios
 const getClassList = async () => {
-  openLoading();
-  console.log(searchFormSelect.semester__semester_id);
   const result = await get_class_list(searchFormSelect);
   totalPage.value = result.data.length;
   if (result.status === 200) {
     classes.value = result.data;
   }
-  closeLoading();
 };
 const sliceClassList = () => {
   slicedClasses.value = classes.value.slice(
@@ -176,13 +124,11 @@ const sliceClassList = () => {
   );
 };
 const getUserInfo = async () => {
-  openLoading();
   const result = await get_user_info();
   if (result.status === 200) {
     userInfo.value = result.data;
   }
   console.log(userInfo.value);
-  closeLoading();
 };
 const getStudentCourseSelectionList = async () => {
   openLoading();

@@ -13,6 +13,7 @@ import StudentCourseSelection from "@/components/student/StudentCourseSelection.
 import StudentCourse from "@/components/student/StudentCourse.vue";
 import TeacherCourse from "@/components/teacher/TeacherClass.vue";
 import TeacherScore from "@/components/teacher/TeacherScore.vue";
+import StudentCourseDrop from "@/components/student/StudentCourseDrop.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -52,6 +53,10 @@ const router = createRouter({
     {
       path: "/student/select",
       component: StudentCourseSelection,
+    },
+    {
+      path: "/student/drop",
+      component: StudentCourseDrop,
     },
     {
       path: "/student/course",
