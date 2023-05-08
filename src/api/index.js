@@ -203,3 +203,15 @@ export const delete_student_course_selection = (data) =>
     method: "post",
     data: data,
   });
+
+export const select_student_course_selection = (data) =>
+  requests({
+    url: `/course_selection/enroll/`,
+    method: "post",
+    data: data,
+  });
+export const get_user_info = () =>
+  requests({
+    url: `/student/info/`,
+    method: "get",
+  });

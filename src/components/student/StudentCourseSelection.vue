@@ -103,7 +103,7 @@
         />
       </div>
     </div>
-
+    <el-divider></el-divider>
     <div>
       <div class="buttons-box">
         <el-select
@@ -174,6 +174,8 @@ import {
   put_class,
   get_student_course_selection_list,
   delete_student_course_selection,
+  select_student_course_selection,
+  get_user_info,
 } from "@/api";
 import { useRouter } from "vue-router";
 import StudentTemplate from "@/components/student/StudentTemplate.vue";
@@ -209,6 +211,8 @@ const pageSize = ref(10);
 const totalPage = ref(0);
 // loading
 const loading = ref();
+// userId
+const userInfo = ref();
 // axios
 const getClassList = async () => {
   openLoading();
@@ -225,6 +229,15 @@ const sliceClassList = () => {
     pageSize.value * (nowSelectedPageSelect.value - 1),
     pageSize.value * nowSelectedPageSelect.value
   );
+};
+const getUserInfo = async () => {
+  openLoading();
+  const result = await get_user_info();
+  if (result.status === 200) {
+    userInfo.value = result.data;
+  }
+  console.log(userInfo.value);
+  closeLoading();
 };
 const getStudentCourseSelectionList = async () => {
   openLoading();
@@ -254,6 +267,16 @@ const deleteSelectedCourse = async () => {
     class_id: nowSelectedRowData.value.class_field.class_id,
   };
   await delete_student_course_selection(temp);
+  await refreshTable();
+  closeLoading();
+};
+const selectCourse = async () => {
+  openLoading();
+  const temp = {
+    student_id: userInfo.value.student_id,
+    class_id: nowSelectedRowDataSelect.value.class_id,
+  };
+  await select_student_course_selection(temp);
   await refreshTable();
   closeLoading();
 };
@@ -292,8 +315,44 @@ const handleAddClick = () => {
       message: "未选中行",
     });
   } else {
-    handleDelete();
+    handleAdd();
   }
+};
+const handleAdd = () => {
+  // 确认框
+  ElMessageBox.confirm("是否确认选课?", "", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      console.log(haveSelectClass());
+      if (!haveSelectClass()) {
+        if (timeIsEmpty()) {
+          selectCourse();
+          ElMessage({
+            type: "success",
+            message: "选课操作成功",
+          });
+        } else {
+          ElMessage({
+            type: "warning",
+            message: "与已选课程时间冲突，选课操作失败",
+          });
+        }
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "已经选择该课程，选课操作失败",
+        });
+      }
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "选课操作取消",
+      });
+    });
 };
 const handleDeleteClick = () => {
   if (!nowSelectedRowData.value) {
@@ -313,11 +372,18 @@ const handleDelete = () => {
     type: "warning",
   })
     .then(() => {
-      deleteSelectedCourse();
-      ElMessage({
-        type: "success",
-        message: "退课操作成功",
-      });
+      if (nowSelectedRowData.value.can_drop) {
+        deleteSelectedCourse();
+        ElMessage({
+          type: "success",
+          message: "退课操作成功",
+        });
+      } else {
+        ElMessage({
+          type: "warning",
+          message: "课程已有成绩，退课操作失败",
+        });
+      }
     })
     .catch(() => {
       ElMessage({
@@ -339,6 +405,7 @@ const refreshTable = async () => {
   nowSelectedPageSelect.value = 1;
   sliceStudentCourseSelectionList();
   sliceClassList();
+  generateClassesInfo();
 };
 
 // loading
@@ -353,9 +420,48 @@ const closeLoading = () => {
   loading.value.close();
 };
 
+// 避免同时间选课
+const courseLabels = ref([[], [], [], [], []]);
+const weekDic = reactive({
+  一: 1,
+  二: 2,
+  三: 3,
+  四: 4,
+  五: 5,
+  六: 6,
+  七: 7,
+});
+const generateClassesInfo = () => {
+  courseLabels.value = [[], [], [], [], []];
+  console.log(selectedCourses.value);
+  selectedCourses.value.forEach((item) => {
+    const day = weekDic[item.class_field.time];
+    const startTime = item.class_field.start;
+    const endTime = item.class_field.end;
+    for (let i = startTime - 1; i < endTime; i++) {
+      courseLabels.value[day - 1][i] = 1;
+    }
+  });
+};
+const timeIsEmpty = () => {
+  const day = weekDic[nowSelectedRowDataSelect.value.time];
+  const startTime = nowSelectedRowDataSelect.value.start;
+  const endTime = nowSelectedRowDataSelect.value.end;
+  for (let i = startTime - 1; i < endTime; i++) {
+    if (courseLabels.value[day - 1][i] === 1) return false;
+  }
+  return true;
+};
+const haveSelectClass = () =>
+  selectedCourses.value.filter(
+    (item) =>
+      item.class_field.course.course_id ===
+      nowSelectedRowDataSelect.value.course.course_id
+  ).length > 0;
 onMounted(() => {
-  refreshTable();
+  getUserInfo();
   getSemesterList();
+  refreshTable();
 });
 </script>
 

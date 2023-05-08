@@ -1,5 +1,20 @@
 <template>
   <student-template>
+    <div class="buttons-box">
+      <el-select
+        v-model="searchForm.semester_id"
+        @change="
+          changeSemester($event);
+          refreshTable();
+        "
+      >
+        <el-option
+          v-for="semester in semesters"
+          :label="semester.name"
+          :value="semester.semester_id"
+        />
+      </el-select>
+    </div>
     <!--      课表-->
     <div>
       <div class="content">
@@ -185,22 +200,6 @@
     </div>
     <!--      课程-->
     <div>
-      <div class="buttons-box">
-        <el-select
-          v-model="searchForm.semester_id"
-          @change="
-            changeSemester($event);
-            refreshTable();
-          "
-        >
-          <el-option
-            v-for="semester in semesters"
-            :label="semester.name"
-            :value="semester.semester_id"
-          />
-        </el-select>
-      </div>
-
       <div class="table-box">
         <el-table
           :data="slicedSelectedCourses"
@@ -351,7 +350,6 @@ const closeLoading = () => {
 };
 
 // 课表相关
-const activeIndex = ref("");
 const courseNames = ref([[], [], [], [], []]);
 const courseTeacherNames = ref([[], [], [], [], []]);
 const courseClassrooms = ref([[], [], [], [], []]);
@@ -539,12 +537,12 @@ th,
 td {
   width: 150px;
   height: 80px;
-  font-size: 10px;
+  font-size: 12px;
   text-align: center;
   border: 1px solid #f3f3f3;
 }
 td:hover {
-  background: #e7f7f4;
+  background: #ececec;
   .dis {
     display: block;
     text-align: center;
@@ -565,7 +563,7 @@ td:hover {
   background: #bcd6fc;
 }
 .fw {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
 }
 .dis {
