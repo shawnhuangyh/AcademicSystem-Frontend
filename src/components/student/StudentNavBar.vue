@@ -13,6 +13,7 @@
       <el-menu-item index="/student/select">选课管理</el-menu-item>
       <el-menu-item index="/student/drop">退课管理</el-menu-item>
       <el-menu-item index="/student/course">查看课程</el-menu-item>
+      <el-menu-item index="/student/statistic">成绩统计</el-menu-item>
     </el-sub-menu>
   </el-menu>
 </template>
