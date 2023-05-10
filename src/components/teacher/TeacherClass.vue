@@ -398,12 +398,6 @@ const datelist = ref([
     week: "星期日",
   },
 ]);
-const refreshTable = async () => {
-  await getStudentCourseSelectionList();
-  nowSelectedPage.value = 1;
-  sliceStudentCourseSelectionList();
-  generateClassesInfo();
-};
 onMounted(() => {
   refreshTable();
   getSemesterList();
