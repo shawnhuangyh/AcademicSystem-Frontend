@@ -34,8 +34,8 @@ import { router } from "@/router";
 import { AxiosError } from "axios";
 
 const loginForm = reactive({
-  username: "shawn",
-  password: "admin",
+  username: "admin",
+  password: "password",
 });
 
 const loginRules = ref({
