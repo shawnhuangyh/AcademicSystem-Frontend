@@ -12,6 +12,7 @@ import {
 } from "@/api";
 import TeacherTemplate from "@/components/teacher/TeacherTemplate.vue";
 import { getUser } from "@/utils/token";
+import * as echarts from "echarts";
 
 // search
 const searchForm = reactive({
@@ -165,6 +166,8 @@ const refreshTable = async () => {
   await getCourseSelectionList();
   nowSelectedPage.value = 1;
   sliceCourseSelectionList();
+  generateEchartData();
+  changeEchart();
 };
 
 // loading
@@ -179,10 +182,67 @@ const openLoading = () => {
 const closeLoading = () => {
   loading.value.close();
 };
+const myChart = ref();
+const initEchart = () => {
+  let chartDom = document.getElementById("main");
+  myChart.value = echarts.init(chartDom);
+  let option;
 
+  option = {
+    xAxis: {
+      type: "category",
+      data: studentName.value,
+    },
+    tooltip: {
+      trigger: "item",
+    },
+    yAxis: {
+      type: "value",
+    },
+    series: [
+      {
+        data: studentNameAndCourseName.value,
+        type: "bar",
+      },
+    ],
+  };
+
+  option && myChart.value.setOption(option);
+};
+const changeEchart = () => {
+  myChart.value.setOption({
+    xAxis: {
+      type: "category",
+      data: studentName.value,
+    },
+    yAxis: {
+      type: "value",
+    },
+    series: [
+      {
+        data: studentNameAndCourseName.value,
+        type: "bar",
+      },
+    ],
+  });
+};
+const studentName = ref([]);
+const studentNameAndCourseName = ref([]);
+const generateEchartData = () => {
+  studentName.value = [];
+  studentNameAndCourseName.value = [];
+  courseSelections.value.forEach((item) => {
+    studentName.value.push(item.student.name);
+    studentNameAndCourseName.value.push({
+      value: item.gpa,
+      name: item.class_field.course.name,
+    });
+  });
+};
 onMounted(() => {
   refreshTable();
   getSemesterList();
+  initEchart();
 });
 </script>
 
@@ -337,6 +397,7 @@ onMounted(() => {
         </template>
       </el-dialog>
     </div>
+    <div style="height: 600px; width: 100%" id="main"></div>
   </teacher-template>
 </template>
 
